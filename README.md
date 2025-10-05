@@ -9,7 +9,7 @@ NOTE: This pipeline relies on several databases (NR, NT, RVDB and RdRp-Scan), mo
 
 --------------------
 ### Table of Contents
-- [Virus discovery workflow](#Virus discovery workflow)
+- [Virus discovery workflow](#Virus-discovery-workflow)
     - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Pipeline](#pipeline)

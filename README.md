@@ -44,7 +44,7 @@ https://www.ibm.com/aspera/connect/
 
 Each general task you want to run is associated with a .sh (shell) and .pbs script. The .sh script works as a wrapper, passing parameters and variables to the .pbs script. After setting up, you usually don't need to edit the .pbs script.
 
-If you are unsure about what variables/files to use just call the help flag `-h` e.g., `_pipeline_download_sra.sh -h` (from verison 1.0.4 onwards)
+If you are unsure about what variables/files to use just call the help flag `-h` e.g., `_pipeline_download_sra.sh -h` 
 
 The scripts are designed to process batches, so they require a list of filenames to run.
 
@@ -53,7 +53,7 @@ The scripts are designed to process batches, so they require a list of filenames
 ## Pipeline
 The standard pipeline follows these steps:
 
-![Pipeline](docs/images/pipeline_schematic.drawio.png)
+![Pipeline](images/Pipeline_schematic_VirusDiscoveryWorkflow.png)
 
 1. Create an accession file, plain text with the names of your libaries, one per line. These can either be SRA run ids or Non-SRA libaries (!see section Non-SRA libaries). This will be used as the main input for the scripts.
 2. Download SRA e.g, `_pipeline_download_sra.sh` Note all the scripts will be renamed to reflect your project name. This can be skipped if you have generated the sequencing data yourself 

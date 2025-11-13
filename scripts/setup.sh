@@ -1,55 +1,81 @@
 #!/bin/bash
-###############################################################################################################
-#                                            BatchArtemisSRAMiner                                             #   
-#                                                JCO Mifsud                                                   # 
-#                                                   2023                                                      # 
-###############################################################################################################
 
-# This script sets up a project with a specified structure in the provided root directory.
-# It also moves all files from the current directory to the project's script directory 
-# and replaces 'JCOM_pipeline' with the project name in file names and file contents.
+##################################################################
+#          Virus discovery workflow							 #
+#              Cinthy Jimenez-Silva								 #
+#						2025								     #
+##################################################################
+
+# This bash script sets up your project with a specific structure. 
+#user id workspace 
 
 # Root directory for all projects
-root="jcomvirome"
+root="/workspace/hraczj"
 
-# Project name
-project="JCOM_pipeline_virome"
+# project name with refer host-enviroment
+project="Phytophthora_VirusDiscovery_2022"
 
-# email address
-email="jmif9945@uni.sydney.edu.au"
+# email name
+email="cinthy.jimenez-silva@plantandfood.co.nz"
 
-# Define directory paths for convenience
-project_dir="/project/${root}/${project}"
-scratch_dir="/scratch/${root}/${project}"
+# Define directoy paths for convenience
+project_dir="${root}/${project}"
 
-# Create project directories in /project and /scratch
-# The -p option creates parent directories as needed and doesn't throw an error if the directory already exists.
-echo "Creating project directories..."
-mkdir -p "${project_dir}"/{scripts,accession_lists,adapters,logs,environments,ccmetagen,blast_results,annotation,mapping,contigs/{final_logs,final_contigs},fastqc,read_count}
-mkdir -p "${scratch_dir}"/{abundance,read_count,raw_reads,trimmed_reads}
-mkdir -p "${scratch_dir}"/abundance/final_abundance
 
-# Move all files from the current directory to the project's scripts directory
-echo "Moving files to the project's scripts directory..."
-mv ./* "${project_dir}/scripts"
-mv ../environments/* "${project_dir}/environments/"
-mv ../adapters/* "${project_dir}/adapters/"
 
-# Navigate to the project's scripts directory
-cd "${project_dir}/scripts"
+#Define subdirectories paths within project
+raw="000.raw"
+fastq_raw="001.fastqc_raw"
+trim="002.trim"
+fastqc_trim="003.fastqc_trim"
+temp="temp"
 
-# Rename files with project name substitution
-echo "Renaming files with project name substitution..."
-find . -type f -exec bash -c 'new_file="${1/JCOM_pipeline/$2}"; [ "$1" != "$new_file" ] && mv "$1" "$new_file"' _ {} "$project" \;
+#create project directories
 
-# Replace project-related variables in the script files
-echo "Replacing project-related variables in the script files..."
-sed -i "s/JCOM_pipeline_virome/$project/g" *
-sed -i "s/JCOM_pipeline/$project/g" *
-sed -i "s/jcomvirome/$root/g" *
-sed -i "s/jmif9945@uni.sydney.edu.au/$email/g" *
+echo "Creating project main directory"
+mkdir -p "$project_dir"
 
-# Notify user about the project and scratch directory paths
-echo "Project setup completed successfully."
-echo "Project directory: ${project_dir}"
-echo "Scratch directory: ${scratch_dir}"
+echo "Creating subdirectories .."
+for subdir in "$raw" "$fastq_raw" "$trim" "$fastqc_trim" "$temp"; do
+    mkdir -p "${project_dir}/${subdir}"
+done
+
+echo "Setup complete for project: $project"
+echo "Directories created under $project_dir"
+
+
+# Create symlinks of all input fastq files and put them in $raw
+
+# Input base path
+input_base="/input/genomic/viral/Phytophthora/MGS00464_Illumina_RNA-seq/X201SC21060659-Z01-F001/raw_data"
+
+# Project raw directory (already created in setup.sh)
+RAW="${project_dir}/000.raw"
+
+
+# Loop through all RNAR directories (RNAR1, RNAR2, RNAR3, …)
+for rnadir in "${input_base}"/RNAR*; do
+    sample=$(basename "$rnadir")   # e.g. RNAR1, RNAR2, RNAR3
+    echo "Processing sample: $sample"
+
+    # Find FASTQ files inside (paired-end assumed: *_1.fq.gz, *_2.fq.gz)
+    for fq in "$rnadir"/*.fq.gz; do
+        fq_name=$(basename "$fq")
+
+        # Detect if it's R1 or R2
+        if [[ "$fq_name" == *"_1.fq.gz" ]]; then
+            new_name="${sample}_R1.fq.gz"
+        elif [[ "$fq_name" == *"_2.fq.gz" ]]; then
+            new_name="${sample}_R2.fq.gz"
+        else
+            # fallback if naming doesn’t follow the convention
+            new_name="${sample}_${fq_name}"
+        fi
+
+        # Create symlink in RAW directory
+        ln -s "$fq" "${project_dir}/000.raw/${new_name}"
+        echo "  Linked $fq → ${project_dir}/000.raw/${new_name}"
+    done
+done
+
+echo "All symlinks created in $RAW"

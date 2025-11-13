@@ -42,7 +42,7 @@ Under the hood Kingfisher is used to try multiple SRA download methods. One of t
 https://www.biostars.org/p/325010/
 https://www.ibm.com/aspera/connect/ 
 
-Each general task you want to run is associated with a .sh (shell) and .pbs script. The .sh script works as a wrapper, passing parameters and variables to the .pbs script. After setting up, you usually don't need to edit the .pbs script.
+Each general task you want to run is associated with a .sh (shell) and .slurm script. The .sh script works as a wrapper, passing parameters and variables to the .slurm script. After setting up, you usually don't need to edit the .slurm script.
 
 If you are unsure about what variables/files to use just call the help flag `-h` e.g., `_pipeline_download_sra.sh -h` 
 
@@ -58,10 +58,10 @@ The standard pipeline follows these steps:
 1. Create an accession file, plain text with the names of your libaries, one per line. These can either be SRA run ids or Non-SRA libaries (!see section Non-SRA libaries). This will be used as the main input for the scripts.
 2. Download SRA e.g, `_pipeline_download_sra.sh` Note all the scripts will be renamed to reflect your project name. This can be skipped if you have generated the sequencing data yourself 
 3. Check the that the raw reads have downloaded by looking in `/scratch/^your_root_project^/^your_project^/raw_reads` . You can use the `check_sra_downloads.sh` script to do this! Re-download any that are missing (make a new file with the accessions) 
-4. Run read trimming, assembly and calculate contig abundance e.g, `JCOM_pipeline_trim_assembly_abundance.sh`. Trimming is currently setup for TruSeq3 PE and SE illumania libs and will also trim nextera (PE only). Check that all contigs are non-zero in size in `/project/^your_root_project^/^your_project^/contigs/final_contigs/`. It is advised to check trimming quality on atleast a subset of samples using the included fastqc scripts. Furthermore check the size of the trimmed read files to ensure that an excessive number of reads isn't being removed. 
+4. Run read trimming, assembly and calculate contig abundance e.g, `pipeline_trim_assembly_abundance.sh`. Trimming is currently setup for TruSeq3 PE and SE illumania libs and will also trim nextera (PE only). Check that all contigs are non-zero in size in `/project/^your_root_project^/^your_project^/contigs/final_contigs/`. It is advised to check trimming quality on atleast a subset of samples using the included fastqc scripts. Furthermore check the size of the trimmed read files to ensure that an excessive number of reads isn't being removed. 
 5. Run blastxRdRp and blastxRVDB (these can be run simultaneously). Run Fastqc script to check quality and presence of adapters.
-6. Run blastnr and blastnt (these can be run simultaneously). Given an accession file this command will combine the blastcontigs from RdRp and RVDB and use it as input for nr and nt. As such you will notice there is only a single job ran for each instead of an array `JCOM_pipeline_blastnr.sh` `JCOM_pipeline_blastnt.sh`. Output is named after the -f file.
-7.  Run the readcount script `JCOM_pipeline_readcount.sh`
+6. Run blastnr and blastnt (these can be run simultaneously). Given an accession file this command will combine the blastcontigs from RdRp and RVDB and use it as input for nr and nt. As such you will notice there is only a single job ran for each instead of an array `pipeline_blastnr.sh` `pipeline_blastnt.sh`. Output is named after the -f file.
+7.  Run the readcount script `pipeline_readcount.sh`
 8.  Generate a summary table (Anaconda is needed - see below). The summary table script will create several files inside `/project/^your_root_project^/^your_project^/blast_results/summary_table_creation`. The csv files are the summary tables - if another format or summary would suit you best let me know and we can sit down and develop it. You can specify accessions if you only want to run the summary table on a subset of runs -f as normal. IMPORTANT check both the logs files generated in the logs folder `summary_table_creation_TODAY_stderr.txt` and `summary_table_creation_TODAY_stout.txt` as this will let you know if any of the inputs were missing etc. 
 
 The large files e.g., raw and trimmed reads and abundance files are stored in `/scratch/` while the smaller files tend to be in /project/
@@ -75,7 +75,7 @@ The large files e.g., raw and trimmed reads and abundance files are stored in `/
 You can check the status of a job using `qstat -u USERNAME`. This will show you the status of the batch scripts. To check the status of individual subjobs within a batch, use `qstat -tx JOB_ID`.
 
 ### Job Status Shortcut
-Replace jmif9945 with your unikey and run the following line to create an alias for `q`. This will display two panels: the top panel shows the last 100 jobs/subjobs, while the bottom panel provides a summary of batch jobs:
+Replace hraczj with your unikey and run the following line to create an alias for `q`. This will display two panels: the top panel shows the last 100 jobs/subjobs, while the bottom panel provides a summary of batch jobs:
 
 `alias q="qstat -Jtan1 -xu ^your_username^ | tail -n100; qstat -u ^your_username^"`
 Enter q to check the job status. If you want to make this alias permanent, add it to your .bashrc file:
@@ -96,11 +96,11 @@ Then to load it: `source ~/.bashrc`
 
 ### Common Flags
 
-Note: Flags can vary between scripts, If you are unsure about what variables/files to use just call the help flag `-h` e.g., `_pipeline_download_sra.sh -h` (from verison 1.0.4 onwards)
+Note: Flags can vary between scripts, If you are unsure about what variables/files to use just call the help flag `-h` e.g., `_pipeline_download_sra.sh -h`
 
 However, the common flags are as follows:
 
-`-f` used to specify a file that contains the SRA run accessions to be processed. This option is followed by a string containing the complete path to a file containing accessions one per line. I typically store these files in `/project/your_root/your_project/accession_lists/`. If this option is not provided, most of the scripts in the pipeline will fail or excetue other behaviours (e.g., see the -f in `trim_assembly_abundance.sh`), as such I always recommmend setting the -f where able so you can better keep track of the libraries you are running. NOTE: The max number of SRAs I would put in a accession file is 1000. If you have more than this create two files and run the download_script twice. The limit is enforced by Artemis/PBS. 
+`-f` used to specify a file that contains the SRA run accessions to be processed. This option is followed by a string containing the complete path to a file containing accessions one per line. I typically store these files in `/project/your_root/your_project/accession_lists/`. If this option is not provided, most of the scripts in the pipeline will fail or excetue other behaviours (e.g., see the -f in `trim_assembly_abundance.sh`), as such I always recommmend setting the -f where able so you can better keep track of the libraries you are running. NOTE: The max number of SRAs I would put in a accession file is 1000. If you have more than this create two files and run the download_script twice. The limit is enforced by Slurm. 
 
 **Less common**
 `-i` The input option. This option is followed by a string that represents the input file for the script. This is used most commonly in the custom blast scripts where you are interested in a single input rather than an array of files. 
@@ -132,25 +132,9 @@ I tend to delete the raw and trimmed read files after contigs are the trim_assem
 
 --------------------
 
-## Troubleshooting
-
-If your SRA fails, check the error and output logs in the logs folder in the project branch.
-
-Downloading Failure
-Downloads often time out, and while the script will attempt to download multiple times, it might eventually fail. If this happens, use the check_sra_downloads.sh script to identify which libraries failed. This script will generate a file that can be fed back into -f.
-
-Other reasons for download failure could be invalid SRA run id or insufficient storage space in the directory.
-
-Trimming/Assembly Failure
-The most common cause of trimming/assembly failure is a corrupt download. In this case, it's best to remove, redownload, and reassemble the data.
-
-PBS job rejected from all possible destinations. Make sure you have less than 1000 accessions. Also ensure that you have updated the pipeline to v1.0.1 as there is a mistake in the inital release that results in an invalid walltime being requested. 
-
-
---------------------
-
 ## Acknowledgments
 I'd like to acknowledge of the Holmes Lab for their contributions to the development of th USYD Artemis workflow which inspires this one.
+
 --------------------
 
 ## How to cite this repo?

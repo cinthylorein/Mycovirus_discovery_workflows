@@ -73,8 +73,8 @@ Note: the pipeline requires server-installed reference databases (NR, NT, RVDB, 
 8. Generate summary tables: Run the summary table script to produce output files in /project/<root_project>/<project>/blast_results/summary_table_creation. The CSV files in that folder are the summary tables. You can limit the summary to a subset of runs by supplying an accession file with -f. Always check the log files in the logs folder (summary_table_creation_TODAY_stderr.txt and summary_table_creation_TODAY_stdout.txt) to ensure all inputs were present and to identify any errors.
 
 Note:
-
 The pipeline depends on server-installed reference databases (NR, NT, RVDB, RdRp-Scan), software modules, and taxonomy files (NCBI taxdb, taxize, RVDB tax). These resources are not downloaded automatically and must be present on the server.
+
 --------------------
 
 ## Acknowledgments

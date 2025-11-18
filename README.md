@@ -1,6 +1,6 @@
 # Virus discovery workflow
 
-This repo contains virus discovery workflows on powerPlant and Nesi HPC. It can be use with your own sequencing data but with a particular focus on SRA mining for Mycoviruses. 
+This repo contains virus discovery workflows on powerPlant and Nesi HPC. It can be use with your own sequencing data and can be used on SRA mining for Mycoviruses. 
 
 The premise of the workflow is to quickly set up a folder structure and script set for a given project and to provide a repo that we can refer to in our methods section in manuscripts. 
 

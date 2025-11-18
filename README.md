@@ -63,9 +63,10 @@ The standard pipeline follows these steps:
 
 | contig_id | sample_id | contig_length | abundance_TPM | read_count | best_db | best_hit_accession | best_hit_description | percent_identity | align_length | evalue | bitscore | taxid | lineage | classification | notes |
 |---|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|---|---|---|
-| contig_0001_sampleA | sampleA | 3258 | 1523.4 | 4821 | nr | YP_009724389.1 | RNA-dependent RNA polymerase [Hypothetical virus X] | 98.5 | 310 | 1e-120 | 460 | 12345 | Viruses; Riboviria; Picornavirales; Caliciviridae; Norovirus | likely | RdRp hit high identity; RdRp-scan positive |
-| contig_0002_sampleB | sampleB | 1412 | 210.1 | 873 | RVDB | RVDB_ABC12345 | Capsid protein [Uncharacterized virus Y] | 92.3 | 250 | 2e-60 | 320 | 67890 | Viruses; Riboviria; Narnavirales; Narnaviridae; Mitovirus | likely | RVDB hit; taxid from RVDB mapping |
-| contig_0005_sampleC | sampleC | 2187 | 320.9 | 1104 | RdRpScan | RdRp_000987654 | Conserved RdRp domain [novel virus fragment] | 89.9 | 400 | 3e-80 | 410 | 33445 | Viruses; Riboviria; Unclassified_RdRp | likely | Detected by RdRp-scan; no close nr hit |
+| contig_0001_sampleA | sampleA | 3258 | 1523.4 | 4821 | nr | YP_009724389.1 | RNA-dependent RNA polymerase [Hypothetical virus X] | 98.5 | 310 | 1e-120 | 460 | 12345 | Riboviria; Picornavirales; Caliciviridae; Norovirus | likely | RdRp hit high identity; RdRp-scan positive |
+| contig_0002_sampleB | sampleB | 1412 | 210.1 | 873 | RVDB | RVDB_ABC12345 | Capsid protein [Uncharacterized virus Y] | 92.3 | 250 | 2e-60 | 320 | 67890 | Riboviria; Narnavirales; Narnaviridae; Mitovirus | likely | RVDB hit; taxid from RVDB mapping |
+| contig_0005_sampleC | sampleC | 2187 | 320.9 | 1104 | RdRpScan | RdRp_000987654 | Conserved RdRp domain [novel virus fragment] | 89.9 | 400 | 3e-80 | 410 | 33445 | Riboviria; Unclassified_RdRp | likely | Detected by RdRp-scan; no close nr hit |
+
 
 Note:
 The pipeline depends on server-installed reference databases (NR, NT, RVDB, RdRp-Scan), software modules, and taxonomy files (NCBI taxdb, taxize, RVDB tax). These resources are not downloaded automatically and must be present on the server.

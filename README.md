@@ -64,12 +64,8 @@ The standard pipeline follows these steps:
 | contig_id | sample_id | contig_length | abundance_TPM | read_count | best_db | best_hit_accession | best_hit_description | percent_identity | align_length | evalue | bitscore | taxid | lineage | classification | notes |
 |---|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|---|---|---|
 | contig_0001_sampleA | sampleA | 3258 | 1523.4 | 4821 | nr | YP_009724389.1 | RNA-dependent RNA polymerase [Hypothetical virus X] | 98.5 | 310 | 1e-120 | 460 | 12345 | Viruses; Riboviria; Picornavirales; Caliciviridae; Norovirus | likely | RdRp hit high identity; RdRp-scan positive |
-| contig_0002_sampleA | sampleA | 1412 | 210.1 | 873 | RVDB | RVDB_ABC12345 | Capsid protein [Uncharacterized virus Y] | 92.3 | 250 | 2e-60 | 320 | 67890 | Viruses; Riboviria; Narnavirales; Narnaviridae; Mitovirus | likely | RVDB hit; taxid from RVDB mapping |
-| contig_0005_sampleB | sampleB | 2187 | 320.9 | 1104 | RdRpScan | RdRp_000987654 | Conserved RdRp domain [novel virus fragment] | 89.9 | 400 | 3e-80 | 410 | 33445 | Viruses; Riboviria; Unclassified_RdRp | likely | Detected by RdRp-scan; no close nr hit |
-| contig_0003_sampleB | sampleB | 980 | 45.7 | 98 | nr | WP_011111111.1 | Helicase-like protein [Bacteriophage Z] | 78.1 | 180 | 5e-12 | 95 | 22222 | Viruses; Duplornaviricota; Totivirales; Totiviridae; Totivirus | potential | Lower identity and coverage; check manually |
-| contig_0006_sampleA | sampleA | 1500 | 12.4 | 41 | rvdb | RVDB_XYZ67890 | Hypothetical protein [Unknown source] | 70.2 | 120 | 4e-06 | 50 | 44556 | Viruses; Riboviria; Unknown | potential | Low identity; short alignment; further validation required |
-| contig_0004_sampleC | sampleC | 420 | 5.2 | 12 | nt | AB123456.1 | Uncharacterised protein [Host mitochondrion] | 85.0 | 150 | 1e-20 | 140 | 9606 | Eukaryota; Opisthokonta; Fungi; Ascomycota; Saccharomycetes | host | Likely host/contaminant |
-
+| contig_0002_sampleB | sampleB | 1412 | 210.1 | 873 | RVDB | RVDB_ABC12345 | Capsid protein [Uncharacterized virus Y] | 92.3 | 250 | 2e-60 | 320 | 67890 | Viruses; Riboviria; Narnavirales; Narnaviridae; Mitovirus | likely | RVDB hit; taxid from RVDB mapping |
+| contig_0005_sampleC | sampleC | 2187 | 320.9 | 1104 | RdRpScan | RdRp_000987654 | Conserved RdRp domain [novel virus fragment] | 89.9 | 400 | 3e-80 | 410 | 33445 | Viruses; Riboviria; Unclassified_RdRp | likely | Detected by RdRp-scan; no close nr hit |
 
 Note:
 The pipeline depends on server-installed reference databases (NR, NT, RVDB, RdRp-Scan), software modules, and taxonomy files (NCBI taxdb, taxize, RVDB tax). These resources are not downloaded automatically and must be present on the server.

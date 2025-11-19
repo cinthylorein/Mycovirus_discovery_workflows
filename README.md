@@ -44,7 +44,7 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
 
 ![Pipeline overview](images/Pipeline_schematic_VirusDiscoveryWorkflow.png)
 
-### High-level overview
+### Overview
 
 - Pipeline A — host-aware (recommended when you have the host reference)
   - Purpose: remove host-derived reads first to reduce background, then assemble and search for viral contigs.

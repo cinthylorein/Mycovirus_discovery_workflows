@@ -38,10 +38,67 @@ The scripts are designed to run on batches: they expect an input file listing sa
 
 --------------------
 
-## Pipeline
-The standard pipeline follows these steps:
+## Workflow
 
-![Pipeline](images/Pipeline_schematic_VirusDiscoveryWorkflow.png)
+This project contains two related but distinct virus‑discovery workflows illustrated in the figure (images/Pipeline_schematic_VirusDiscoveryWorkflow.png). Use (A) when you know the host genome and want to remove host reads before virus discovery; use (B) when you do not remove host reads (environmental or unknown‑host samples) or when starting from SRA accessions.
+
+![Pipeline overview](images/Pipeline_schematic_VirusDiscoveryWorkflow.png)
+
+### High-level overview
+
+- Pipeline A — host-aware (recommended when you have the host reference)
+  - Purpose: remove host-derived reads first to reduce background, then assemble and search for viral contigs.
+  - Typical use case: metatranscriptomes sequenced from a known host (e.g., Botrytis cinerea).
+- Pipeline B — host-agnostic (recommended for environmental samples or when you want to retain host reads)
+  - Purpose: assemble and search without prior host filtering (useful when host genome is unknown or you expect viruses integrated/associated with other organisms).
+
+---
+
+### Pipeline A (host-aware) — step-by-step
+
+1. Set up directories and environment
+   - Run the project setup script that creates the standard folder layout:
+     - `project/<root>/<project>/logs`
+     - `scratch/<root>/<project>/raw_reads`, `trimmed_reads`, `abundance`
+     - `project/<root>/<project>/blast_results`, `summary_table_creation`, ...
+   - Ensure modules/conda environments referenced in the scripts are available.
+
+2. Quality control (FastQC)
+   - Input: raw FASTQ files in `scratch/.../raw_reads`.
+   - Quick QC to check library quality before trimming.
+
+3. Trim reads and assemble transcripts
+   - Trimming: Trimmomatic (or equivalent) to remove adapters and low-quality bases.
+   - Assembly: trinity/megahit/rna assembler to build contigs from trimmed reads.
+
+4. Build host index and remove host reads
+   - Build a Bowtie2 index of the host transcriptome/genome.
+   - Align reads to host and remove aligned reads (keeps likely non‑host reads for viral discovery).
+
+5. Assemble viral contigs
+   - Assemble the host‑filtered reads (SPAdes/Trinity).
+   - Result: candidate contigs enriched for non‑host sequences.
+
+6. BLAST/annotation/search steps
+   - Run RdRp/RdRp-scan search (sensitive search for RNA-dependent RNA polymerases).
+   - Run BLASTx against RVDB (viral protein reference) and against NR/NT as needed.
+   - Typical scripts:
+     - `_blastxRdRp.sh`, `_blastxRVDB.sh`, `_blastnr.sh`, `_blastnt.sh`
+
+7. Read counting & abundance estimation
+   - Map reads back to contigs and calculate abundance (RSEM or similar).
+   - Store per-sample abundance files (TPM/read counts).
+
+8. Create joint summary table
+   - Combine BLAST hits, taxids, abundance and read counts into a single "complete blast summary table".
+   - Scripts: `_summary_table.sh` and R scripts that annotate lineages and filter into `likely` / `potential` virus lists.
+
+9. Extract contigs for final lists
+   - Generate FASTA files containing contigs that were classified as likely or potential viruses for downstream analysis (phylogeny, ORF prediction, etc.).
+
+---
+
+### Pipeline B (host-agnostic) — step-by-step
 
 1. Create an accession file: Make a plain-text file listing one library identifier per line. Each line may be an SRA run ID or a non-SRA library (see the “Non-SRA libraries” section). This accession file is the main input for the scripts.
 

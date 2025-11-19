@@ -71,7 +71,7 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
    - Align reads to host and remove aligned reads (keeps likely non‑host reads for viral discovery).
 
 5. Assemble viral contigs
-   - Assemble the host‑filtered reads (SPAdes/Trinity).
+   - Assemble the host‑filtered reads (SPAdes).
    - Result: candidate contigs enriched for non‑host sequences.
 
 6. BLAST/annotation/search steps

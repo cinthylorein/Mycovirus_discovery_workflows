@@ -48,7 +48,7 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
 
 - Pipeline A — host-aware (recommended when you have the host reference)
   - Purpose: remove host-derived reads first to reduce background, then assemble and search for viral contigs.
-  - Typical use case: metatranscriptomes sequenced from a known host (e.g., Botrytis cinerea).
+  - Typical use case: metatranscriptomes sequenced from a known host (e.g., *Botrytis cinerea*).
 - Pipeline B — host-agnostic (recommended for environmental samples or when you want to retain host reads)
   - Purpose: assemble and search without prior host filtering (useful when host genome is unknown or you expect viruses integrated/associated with other organisms).
 

@@ -58,11 +58,6 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
 
 1. Set up directories and environment
    - Run the project setup script that creates the standard folder layout:
-     - `project/<root>/<project>/logs`
-     - `scratch/<root>/<project>/raw_reads`, `trimmed_reads`, `abundance`
-     - `project/<root>/<project>/blast_results`, `summary_table_creation`, ...
-   - Ensure modules/conda environments referenced in the scripts are available.
-
 2. Quality control (FastQC)
    - Input: raw FASTQ files in `scratch/.../raw_reads`.
    - Quick QC to check library quality before trimming.
@@ -80,21 +75,9 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
    - Result: candidate contigs enriched for non‑host sequences.
 
 6. BLAST/annotation/search steps
-   - Run RdRp/RdRp-scan search (sensitive search for RNA-dependent RNA polymerases).
-   - Run BLASTx against RVDB (viral protein reference) and against NR/NT as needed.
+   - Run BLASTx and against NR/NT as needed.
    - Typical scripts:
-     - `_blastxRdRp.sh`, `_blastxRVDB.sh`, `_blastnr.sh`, `_blastnt.sh`
-
-7. Read counting & abundance estimation
-   - Map reads back to contigs and calculate abundance (RSEM or similar).
-   - Store per-sample abundance files (TPM/read counts).
-
-8. Create joint summary table
-   - Combine BLAST hits, taxids, abundance and read counts into a single "complete blast summary table".
-   - Scripts: `_summary_table.sh` and R scripts that annotate lineages and filter into `likely` / `potential` virus lists.
-
-9. Extract contigs for final lists
-   - Generate FASTA files containing contigs that were classified as likely or potential viruses for downstream analysis (phylogeny, ORF prediction, etc.).
+     - `_blastnr.sh`, `_blastnt.sh`
 
 ---
 

@@ -77,7 +77,7 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
 6. BLAST/annotation/search steps
    - Run BLASTx and against NR/NT as needed.
    - Typical scripts:
-     - `_blastnr.sh`, `_blastnt.sh`
+     - `_blastx.sh`, `_blastnt.sh`
 
 ---
 

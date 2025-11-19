@@ -25,7 +25,7 @@ The workflow creates a standardized project folder structure and a set of script
 
 (If you downloaded and unpacked a ZIP from GitHub you may get a directory named Virus_discovery_workflows-main; adapt the path accordingly, e.g. cd Virus_discovery_workflows-main/scripts.)
 
-3. Make all scripts executable and open setup.sh for editing: chmod +x setup.sh
+3. Make all scripts executable and open setup.sh for editing: chmod +x *.sh
 
 4. Edit the setup.sh file: update the root, project and email variables to match your environment.
 
@@ -45,7 +45,7 @@ The standard pipeline follows these steps:
 
 1. Create an accession file: Make a plain-text file listing one library identifier per line. Each line may be an SRA run ID or a non-SRA library (see the “Non-SRA libraries” section). This accession file is the main input for the scripts.
 
-2. (Optional) Download SRA data: Use the download script (for example, pipeline_download_sra.sh). Note: the scripts will be renamed to include your project name during setup. Skip this step if you already have the sequencing data.
+2. Download SRA data: Use the download script (pipeline_download_sra.sh). Note: the scripts will be renamed to include your project name during setup. Skip this step if you already have the sequencing data.
 
 3. Verify raw read downloads: Confirm the raw reads are present in /scratch/<root_project>/<project>/raw_reads. Use the provided check_sra_downloads.sh script to check for missing files and re-download any missing accessions (create a new accession file for re-downloads).
 

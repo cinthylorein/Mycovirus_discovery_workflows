@@ -40,7 +40,7 @@ The scripts are designed to run on batches: they expect an input file listing sa
 
 ## Workflow
 
-This project contains two related but distinct virus‑discovery workflows illustrated in the figure (images/Pipeline_schematic_VirusDiscoveryWorkflow.png). Use (A) when you know the host genome and want to remove host reads before virus discovery; use (B) when you do not remove host reads (environmental or unknown‑host samples) or when starting from SRA accessions.
+This repository contains two virus‑discovery pipelines illustrated in the figure bellow. Use (A) when you know the host genome and want to remove host reads before virus discovery; use (B) when you do not remove host reads (environmental or unknown‑host samples) or when starting from SRA accessions.
 
 ![Pipeline overview](images/Pipeline_schematic_VirusDiscoveryWorkflow.png)
 

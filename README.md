@@ -10,10 +10,10 @@ The workflow creates a standardized project folder structure and a set of script
 ### Table of Contents
 - [Virus discovery workflow](#Virus-discovery-workflow)
     - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Pipeline](#pipeline)
-  - [Acknowledgments](#acknowledgments)
-  - [How to cite this repo?](#how-to-cite-this-repo)
+      - [Installation](#installation)
+      - [Workflow](#Workflow)
+      - [Acknowledgments](#acknowledgments)
+      - [How to cite this repo?](#how-to-cite-this-repo)
 
 --------------------
 

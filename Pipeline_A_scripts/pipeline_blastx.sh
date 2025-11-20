@@ -1,9 +1,9 @@
 ## Blastx for Phytophthora Virus Discovery RNA-seq data RNA1, 2, 3 samples
 #Redoing the analysis with "sacc" that means Subject accession rather than sseqid as this has other text such as ref|| which makes it difficult to merge datasets later
 
-IN="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/005.rnaviralspades/scaffolds.fasta"
+IN="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/005.rnaviralspades/"
 ###loop forcalling multiple folder call them rnaviralspades,1, 2 so on
-OUT="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/009.blastx/NCBI_RefVirus_aa_August2022"
+OUT="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/009.blastx/"
 LOG="$OUT/logs"
 
 mkdir -p $OUT

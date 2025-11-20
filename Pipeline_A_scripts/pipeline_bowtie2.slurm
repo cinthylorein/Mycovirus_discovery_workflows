@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J Bowtie align
+#SBATCH -J Bowtie_align
 #SBATCH -o ${LOG}/IndexPhytophthora2.out
 #SBATCH -e ${LOG}/IndexPhytophthora2.err
 #SBATCH --array=0-2

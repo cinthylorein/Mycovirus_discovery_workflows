@@ -39,9 +39,10 @@ echo "Submitting Bowtie2 index build job..."
 job_index=$(sbatch --parsable --export=ALL,REF="$REF",INDEX="$INDEX",LOG_DIR="$LOG_DIR" pipeline_bowtie2_build_index.slurm)
 
 echo "Submitting Bowtie2 alignment job array..."
+#job_align=$(sbatch --parsable --export=ALL,INDEX="$INDEX",MAP_IN="$MAP_IN",MAP_OUT="$MAP_OUT",MAP_LOG="$MAP_LOG" pipeline_bowtie2.slurm)
 job_align=$(sbatch --parsable --dependency=afterok:$job_index \
-    --export=ALL,INDEX="$INDEX",MAP_IN="$MAP_IN",MAP_OUT="$MAP_OUT",MAP_LOG="$MAP_LOG" \
-    pipeline_bowtie2_align_array.slurm)
+   --export=ALL,INDEX="$INDEX",MAP_IN="$MAP_IN",MAP_OUT="$MAP_OUT",MAP_LOG="$MAP_LOG" \
+   pipeline_bowtie2.slurm)
 
 echo " Submitted jobs:"
 echo "   └─ Bowtie2 index:   Job ID $job_index"

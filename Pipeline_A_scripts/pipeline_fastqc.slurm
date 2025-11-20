@@ -11,7 +11,7 @@
 #SBATCH -e /workspace/hraczj/Phytophthora_VirusDiscovery_2022/001.fastqc_raw/logs/fastqc_%A_%a.err
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
-#SBATCH --mail-user=
+#SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
 #SBATCH --time=00:10:00
 
 file="${files[$SLURM_ARRAY_TASK_ID]}"

@@ -1,7 +1,7 @@
+#!/bin/bash
 
 
-
-IN="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/005.rnaviralspades/scaffolds.fasta"
+IN="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/005.rnaviralspades/"
 ###loop forcalling multiple folder call them rnaviralspades,1, 2 so on
 OUT="/workspace/hraczj/Phytophthora_VirusDiscovery_2022/008.blastn/"
 LOG="$OUT/logs"

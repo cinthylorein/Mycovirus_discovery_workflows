@@ -5,12 +5,14 @@
 #SBATCH -e /workspace/hraczj/Phytophthora_VirusDiscovery_2022/009.blastx/logs/blastx_%A.err
 #SBATCH --array=0-2
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=6G
-#SBATCH --time=01:00:00
+#SBATCH --mem=10G
+#SBATCH --time=00:10:00
 #SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
 #SBATCH --mail-type=ALL
  
 set -o pipefail
+set -e
+set -x
 
 main() {
     module load ncbi-blast/2.11.0 || {
@@ -49,4 +51,6 @@ main() {
     done
 
     module unload ncbi-blast/2.11.0
+	
+
 }

@@ -25,7 +25,7 @@ The workflow creates a standardized project folder structure and a set of script
 
 (If you downloaded and unpacked a ZIP from GitHub you may get a directory named Virus_discovery_workflows-main; adapt the path accordingly, e.g. cd Virus_discovery_workflows-main/scripts.)
 
-3.convert CRLF to Unix LF and then set the executable bit. From the repository root:
+3. Convert CRLF to Unix LF and then set the executable bit. From the repository root:
 
 ```bash
 # Convert line endings for all top-level .sh files

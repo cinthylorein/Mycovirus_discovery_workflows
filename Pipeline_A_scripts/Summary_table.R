@@ -3,8 +3,8 @@
 # Summary_table.R
 # A runnable script to combine and annotate BLAST result CSVs (blastx / blastn)
 # Usage examples:
-# Rscript Pipeline_A_scripts/Summary_table.R --db /path/to/NCBI_AllVirus_DB.csv --inputs "sample1_blastx.csv,sample2_blastx.csv" --format blastx --outdir ./results
-# Rscript Pipeline_A_scripts/Summary_table.R --db /path/to/NCBI_AllVirus_DB.csv --inputs "/data/*_blastx.csv" --format blastx --outdir ./results
+# Rscript Pipeline_A_scripts_Summary_table.R --db /path/to/NCBI_AllVirus_DB.csv --inputs "sample1_blastx.csv,sample2_blastx.csv" --format blastx --outdir ./results
+# Rscript Pipeline_A_scripts_Summary_table.R --db /path/to/NCBI_AllVirus_DB.csv --inputs "/data/*_blastx.csv" --format blastx --outdir ./results
 #
 # Arguments:
 # --db       : path to the BLASTDB metadata CSV (required)
@@ -233,5 +233,5 @@ cat("Writing unique IDs to:", unique_path, "\n")
 readr::write_csv(unique_df, unique_path)
 
 cat("Done. Outputs:\n")
-cat(" -", combined_path, "\n")
-cat(" -", unique_path, "\n")
+cat(" -", format, combined_path, "\n")
+cat(" -", format, unique_path, "\n")

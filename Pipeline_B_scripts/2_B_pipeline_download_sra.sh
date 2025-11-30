@@ -25,4 +25,4 @@ sbatch --array=0-"$jIndex" \
   --export=ALL,file_of_accessions="$file_of_accessions",root_project="$root_project",project="$project" \
   --output="/project/$root_project/$project/logs/sra_download_%A_%a_stdout.txt" \
   --error="/project/$root_project/$project/logs/sra_download_%A_%a_stderr.txt" \
-  JCOM_pipeline_download_sra.slurm
+  2_B_pipeline_download_sra.slurm

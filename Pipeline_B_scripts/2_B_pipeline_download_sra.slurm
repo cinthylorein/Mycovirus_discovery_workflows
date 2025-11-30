@@ -5,7 +5,6 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=30G
 #SBATCH --time=12:00:00
-#SBATCH --array=0-9  # Replace with the actual number of jobs minus 1
 #SBATCH --mail-user=your.email@example.com
 #SBATCH --mail-type=ALL
 

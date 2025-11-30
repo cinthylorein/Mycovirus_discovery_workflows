@@ -57,5 +57,12 @@ wait_for_job "$job_blastn" "BLASTn"
 job_blastx=$(./pipeline_blastx.sh | awk '/Submitted batch job/ {print $NF}')
 wait_for_job "$job_blastx" "BLASTx"
 
+############################
+# STEP 7: Summary
+############################
+job_sum=$(./pipeline_summary_result.sh | awk '/Submitted batch job/ {print $NF}')
+wait_for_job "$job_sum" "Summary"
+
+
 echo ""
 echo " Pipeline complete! All jobs finished successfully."

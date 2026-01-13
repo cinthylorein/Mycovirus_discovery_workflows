@@ -60,12 +60,9 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
 
 ### Overview
 
-- Pipeline A — host-aware (recommended when you have the host reference)
+- Pipeline — host-aware (recommended when you have the host reference)
   - Purpose: remove host-derived reads first to reduce background, then assemble and search for viral contigs.
   - Typical use case: metatranscriptomes sequenced from a known host (e.g., *Botrytis cinerea*).
-- Pipeline B — host-agnostic (recommended for environmental samples or when you want to retain host reads)
-  - Purpose: assemble and search without prior host filtering (useful when host genome is unknown or you expect viruses integrated/associated with other organisms).
-
 ---
 
 ### Pipeline A (host-aware) — step-by-step
@@ -102,25 +99,6 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
 
       ![BLASTx results of contigs that do not share nucleotide similarity with P. agathidicida](images/pident_by_sample.png)
 
----
-
-### Pipeline B (host-agnostic) — step-by-step
-
-1. Create an accession file: Make a plain-text file listing one library identifier per line. Each line may be an SRA run ID or a non-SRA library (see the “Non-SRA libraries” section). This accession file is the main input for the scripts.
-
-2. Download SRA data: Use the download script (pipeline_download_sra.sh). Note: the scripts will be renamed to include your project name during setup. Skip this step if you already have the sequencing data.
-
-3. Verify raw read downloads: Confirm the raw reads are present in /scratch/<root_project>/<project>/raw_reads. Use the provided check_sra_downloads.sh script to check for missing files and re-download any missing accessions (create a new accession file for re-downloads).
-
-4. Trim reads, assemble, and calculate contig abundance: Run the trimming, assembly and abundance script (for example, pipeline_trim_assembly_abundance.sh). Current trim settings target TruSeq3 paired-end (PE) and single-end (SE) Illumina libraries. After assembly, check that contigs in /project/<root_project>/<project>/contigs/final_contigs/ are non-empty. It is recommended to run FastQC on a subset of samples (scripts included) to inspect trimming quality and to verify that an excessive number of reads are not being removed.
-
-5. Run BLASTx searches against RdRp and RVDB: Execute the BLASTx jobs for RdRp and for RVDB; these can be run in parallel. Also run FastQC to check overall quality and adapter presence.
-
-6. Run BLAST (nr and nt): Run the pipeline_blastnr.sh and pipeline_blastnt.sh scripts. Given an accession file, the pipeline combines contigs identified from RdRp and RVDB and uses them as input for the nr and nt searches. Because of this, each of these is launched as a single job (not an array) and outputs are named after the -f file.
-
-7. Run read counting: Use pipeline_readcount.sh to count reads mapped to contigs.
-
-8. Generate summary tables: Run the summary table script to produce output files in /project/<root_project>/<project>/blast_results/summary_table_creation. The CSV files in that folder are the summary tables. You can limit the summary to a subset of runs by supplying an accession file with -f. Always check the log files in the logs folder (summary_table_creation_TODAY_stderr.txt and summary_table_creation_TODAY_stdout.txt) to ensure all inputs were present and to identify any errors.
 
 ### Example: Summary table 
 

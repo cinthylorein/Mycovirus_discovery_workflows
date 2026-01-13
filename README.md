@@ -65,7 +65,7 @@ This repository contains two virus‑discovery pipelines illustrated in the figu
   - Typical use case: metatranscriptomes sequenced from a known host (e.g., *Botrytis cinerea*).
 ---
 
-### Pipeline A (host-aware) — step-by-step
+### Pipeline (host-aware) — step-by-step
 
 1. Set up directories and environment
    - Run the project setup script that creates the standard folder layout:

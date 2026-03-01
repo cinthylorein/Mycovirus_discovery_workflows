@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # This script sets up a project with a specified structure in the provided root directory.
 # It also moves all files from the current directory to the project's script directory 
 # and replaces 'MVoP_pipeline' with the project name in file names and file contents.
@@ -15,7 +14,6 @@ project="MVoP_pipeline"
 email="mvop.mycoviromeonline@gmail.com"
 
 
-
 # Define directory paths for convenience
 project_dir="${root}/${project}"
 scratch_dir="${root}/${project}"
@@ -26,15 +24,15 @@ cd ..
 
 # The -p option creates parent directories as needed and doesn't throw an error if the directory already exists.
 echo "Creating project directories..."
-mkdir -p "${project_dir}"/{scripts,accession_lists,adapters,logs,environments,ccmetagen,blast_results,annotation,mapping,contigs/{final_logs,final_contigs},fastqc,read_count}
-mkdir -p "${scratch_dir}"/{abundance,read_count,raw_reads,trimmed_reads}
-mkdir -p "${scratch_dir}"/abundance/final_abundance
+mkdir -p "${project_dir}"/{scripts,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc}
+mkdir -p "${scratch_dir}"/{raw_reads,trimmed_reads}
 
 # Move all files from the current directory to the project's scripts directory
 echo "Moving files to the project's scripts directory..."
 mv ./* "${project_dir}/scripts"
 mv ../environments/* "${project_dir}/environments/"
 mv ../adapters/* "${project_dir}/adapters/"
+
 
 # Navigate to the project's scripts directory
 cd "${project_dir}/scripts"

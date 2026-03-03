@@ -1,9 +1,9 @@
 #!/bin/bash
 
-IN_nt="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/blast_results"
-IN_tx="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/blast_results"
-LOG_nt="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/blast_results/nt"
-LOG_tx="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/blast_results/tx"
+IN_nt="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/blast_results"
+IN_tx="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/blast_results"
+LOG_nt="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/blast_results/nt"
+LOG_tx="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/blast_results/tx"
 BLASTDB="/workspace/hrakmc/DBs/NCBI_AllVirus_DB_2AUG2022_sequences.csv"
 BLASTDBtx="/workspace/hrakmc/DBs/NCBI_allVirusaa_DB_Nov2022"
 

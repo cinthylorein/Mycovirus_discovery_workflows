@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J rnaviralspades                   # Job name
-#SBATCH -o /workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/logs/spades_%A_%a.out  # Output log
-#SBATCH -e /workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/logs/spades_%A_%a.err  # Error log
+#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/spades_%A_%a.out  # Output log
+#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/spades_%A_%a.err  # Error log
 #SBATCH --array=0-10                        # Job array size for 11 samples (index 0–10)
 #SBATCH --cpus-per-task=8                   # Set 8 CPUs per task
 #SBATCH --mem=64G                           # Allocate 64GB of memory per task
@@ -21,12 +21,13 @@ main() {
     fi
 
     # Define the sample array
-    local samples=(SRR*)
+    local samples
+    samples=(SRR11783490 SRR11783518 SRR11783495)
 
     # Get sample based on the SLURM task ID
     local label="${samples[$SLURM_ARRAY_TASK_ID]}"
-    local r1="${SPADES_IN}/${label}.non-host_1.fq.gz"
-    local r2="${SPADES_IN}/${label}.non-host_2.fq.gz"
+    local r1="${SPADES_IN}/${label}.non-host.1.fq.gz"
+    local r2="${SPADES_IN}/${label}.non-host.2.fq.gz"
     local outdir="${SPADES_OUT}/${label}"
 
     # Check input files existence

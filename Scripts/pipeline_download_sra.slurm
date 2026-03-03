@@ -1,6 +1,9 @@
 #!/bin/bash
+
+#SBATCH -J fastqc_array
+#SBATCH --array=0-3
 #SBATCH --job-name=ascp_SRA_download
-#SBATCH --output=../sra_download_%A_%.out
+#SBATCH --output=../logs/sra_download_%A_%.out
 #SBATCH --error=../logs/sra_download_%A_%.err
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=30G
@@ -12,13 +15,12 @@
 module load sratoolkit/3.0.0
 
 
-readarray -t myarray <"$file_of_accessions"
-library_id="${myarray[$SLURM_ARRAY_TASK_ID]}"
+#readarray -t myarray <"$file_of_accessions"
+#library_id="${myarray[$SLURM_ARRAY_TASK_ID]}"
+library_id="SRR11783518"
 
-#library_id= SRR11783490
-
-fasterq-dump "$libary_id" --split-files -o "$inpath"
-#fasterq-dump SRR14655085 --split-files
+fasterq-dump "$library_id" --split-files
+#fasterq-dump "$library_id" --split-files -o "$inpath"
 
 
 #while read -r accession; do

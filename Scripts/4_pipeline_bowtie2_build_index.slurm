@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH -J BowtieBuildPhytophthora
-#SBATCH -o /workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/logs/Indexhost_%A_%a.out
-#SBATCH -e /workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/logs/Indexhost_%A_%a.err 
+#SBATCH -J BowtieBuildIndexHost
+#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Indexhost_%A_%a.out
+#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Indexhost_%A_%a.err 
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=00:30:00

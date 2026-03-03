@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-PROJECT="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline"
+PROJECT="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline"
 SPADES_IN="$PROJECT"/mapping
 SPADES_OUT="$PROJECT"/contigs
 SPADES_LOG="$SPADES_OUT"/logs

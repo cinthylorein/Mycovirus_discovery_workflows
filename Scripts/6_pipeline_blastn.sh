@@ -1,9 +1,9 @@
 #!/bin/bash
 
 
-IN="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/contigs"
+IN="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/contigs"
 ###loop forcalling multiple folder call them rnaviralspades,1, 2 so on
-OUT="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/blast_results"
+OUT="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/blast_results"
 LOG="$OUT/logs"
 BLASTDB="/workspace/hrakmc/DBs/NCBI_allVirusnt_DB_AUG2022"
 

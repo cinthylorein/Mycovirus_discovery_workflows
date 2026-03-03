@@ -19,13 +19,13 @@
 
 echo "Defining global variables and directories" 
 
-PROJECT="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline"
+PROJECT="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline"
 TRIM_OUT="${PROJECT}/trimmed_reads"
 UNPAIRED="${TRIM_OUT}/unpaired"
 LOG_DIR="${TRIM_OUT}/logs"
 TRIMMOMATIC="/workspace/cflcyd/software/Trimmomatic/Trimmomatic-0.39/trimmomatic-0.39.jar"
 # Set the path to the adapter file:
-CLIP="/workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/adapters/Illumina.fa"
+CLIP="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/adapters/Illumina.fa"
 
 
 mkdir -p $UNPAIRED

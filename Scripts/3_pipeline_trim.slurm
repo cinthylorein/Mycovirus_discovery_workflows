@@ -5,8 +5,8 @@
 #
 # SBATCH directives (adjust as needed)
 #SBATCH -J TRIM
-#SBATCH -o /workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/logs/Trim2.out
-#SBATCH -e /workspace/hraczj/Epichloe_mycoviruses/MVoPvirome/MVoP_pipeline/logs/Trim2.err
+#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Trim2.out
+#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Trim2.err
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
 #SBATCH --time=10:00:00

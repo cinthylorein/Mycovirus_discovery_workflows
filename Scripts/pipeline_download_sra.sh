@@ -12,9 +12,8 @@ echo "Defining global variables and directories"
 
 
 # Ensure required vars are exported from the .sh wrapper
-inpath="../accession_list"
+inpath="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/accession_lists"
 file_of_accessions="${inpath}/accessions.txt"
-
 
 #Avoid literal expansion when no files are present
 shopt -s nullglob

@@ -1,33 +1,45 @@
 #!/bin/bash
 
-#This script allows us to run fastqc fr the raw and trimmed (included removed reads) 
-#Note
-#Always match the array size to the number of files — it’s more robust, efficient, and avoids job failures.
-#--array=0-<N-1>
+#This script allows us to run fastqc fr the raw and trimmed (included removed reads)
 
 #SBATCH -J fastqc_array
-#SBATCH --array=0-12
-#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/fastqc_%A_%a.out
-#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/fastqc_%A_%a.err
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
 #SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
 #SBATCH --time=00:10:00
+#SBATCH --mail-type=ALL
 
-file="${files[$SLURM_ARRAY_TASK_ID]}"
+set -euo pipefail
+set -x
+
+: "${CONFIG:?CONFIG not set}"
+source "$CONFIG"
 
 # Load the FastQC module:
 module load FastQC/0.12.1
 
-if [[ -z "$threads" || -z "$FASTQC_OUT" ]]; then
-    echo "Missing required variables: threads, or log_dir" >&2
-    exit 1
+# Build list of files inside the job (must match wrapper's counting logic)
+mapfile -t files < <(ls -1 "$RAW_DIR"/*.fastq* 2>/dev/null || true)
+
+if (( ${#files[@]} == 0 )); then
+  echo "ERROR: No FASTQ files found in RAW_DIR=$RAW_DIR" >&2
+  exit 1
+fi
+
+file="${files[$SLURM_ARRAY_TASK_ID]:-}"
+
+if [[ -z "$file" ]]; then
+  echo "ERROR: No file for SLURM_ARRAY_TASK_ID=$SLURM_ARRAY_TASK_ID" >&2
+  echo "files count=${#files[@]}" >&2
+  exit 1
 fi
 
 
-[[ -z "$file" ]] && { echo "No file for task ID $SLURM_ARRAY_TASK_ID"; exit 1; }
+threads="${SLURM_CPUS_PER_TASK:-2}"
 
-fastqc --nogroup -q -t "$threads" -o "$FASTQC_OUT" "$file"
+echo "Running FastQC on: $file"
+
+fastqc --nogroup -q -t "$threads" -o "$FASTQC_DIR" "$file"
 
 printf "All jobs finished.\n"
 

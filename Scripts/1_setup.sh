@@ -1,54 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# This script sets up a project with a specified structure in the provided root directory.
-# It also moves all files from the current directory to the project's script directory 
-# and replaces 'MVoP_pipeline' with the project name in file names and file contents.
+# User can set these before running:
+#   export PIPELINE_ROOT=/somewhere/MVoPvirome
+#   export PROJECT=MVoP_pipeline
+PIPELINE_ROOT="${PIPELINE_ROOT:-/workspace/$USER/Virus_discovery_workflows/MVoPvirome}"
+PROJECT="${PROJECT:-MVoP_pipeline}"
+EMAIL="${EMAIL:-mvop.mycoviromeonline@gmail.com}"
 
-# Root directory for all projects
-root="MVoPvirome"
+PROJECT_DIR="${PIPELINE_ROOT}/${PROJECT}"
 
-# Project name
-project="MVoP_pipeline"
+echo "Setting up project at: $PROJECT_DIR"
+echo "Using PIPELINE_ROOT=$PIPELINE_ROOT"
+echo "Using PROJECT=$PROJECT"
+echo "Using EMAIL=$EMAIL"
 
-# email address
-email="mvop.mycoviromeonline@gmail.com"
+# Create folders (portable)
+mkdir -p "${PROJECT_DIR}"/{scripts,config,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc,environments,raw_reads,trimmed_reads,tmp}
 
+# Install config into the project (Slurm jobs will source THIS copy)
+cp -f "$(dirname "$0")/pipeline.env" "${PROJECT_DIR}/config/pipeline.env"
 
-# Define directory paths for convenience
-project_dir="${root}/${project}"
-scratch_dir="${root}/${project}"
+# Optional: personalize email in the installed config (only if you want it there)
+# (You can also keep email separate; leaving this simple)
+echo "export EMAIL=\"${EMAIL}\"" >> "${PROJECT_DIR}/config/pipeline.env"
 
-#Locating the directory paths 
+# Copy scripts into project/scripts
+# Assumes you run setup from inside the cloned repo and Scripts/ contains the workflow scripts
+cp -f "$(dirname "$0")/"*.sh "${PROJECT_DIR}/scripts/" || true
+cp -f "$(dirname "$0")/"*.slurm "${PROJECT_DIR}/scripts/" 2>/dev/null || true
 
-cd ..
+# Copy adapters/environments if they exist in repo top-level folders
+REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd)"
+if [[ -d "${REPO_ROOT}/adapters" ]]; then
+  cp -rf "${REPO_ROOT}/adapters/." "${PROJECT_DIR}/adapters/"
+fi
+if [[ -d "${REPO_ROOT}/environments" ]]; then
+  cp -rf "${REPO_ROOT}/environments/." "${PROJECT_DIR}/environments/"
+fi
 
-# The -p option creates parent directories as needed and doesn't throw an error if the directory already exists.
-echo "Creating project directories..."
-mkdir -p "${project_dir}"/{scripts,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc}
-mkdir -p "${scratch_dir}"/{raw_reads,trimmed_reads}
-
-# Move all files from the current directory to the project's scripts directory
-echo "Moving files to the project's scripts directory..."
-mv ./* "${project_dir}/scripts"
-mv ../environments/* "${project_dir}/environments/"
-mv ../adapters/* "${project_dir}/adapters/"
-
-
-# Navigate to the project's scripts directory
-cd "${project_dir}/scripts"
-
-# Rename files with project name substitution
-echo "Renaming files with project name substitution..."
-find . -type f -exec bash -c 'new_file="${1/MVoP_pipeline/$2}"; [ "$1" != "$new_file" ] && mv "$1" "$new_file"' _ {} "$project" \;
-
-# Replace project-related variables in the script files
-echo "Replacing project-related variables in the script files..."
-sed -i "s/MVoP_pipeline/$project/g" *
-sed -i "s/MVoP_pipeline/$project/g" *
-sed -i "s/MVoPvirome/$root/g" *
-sed -i "s/mvop.mycoviromeonline@gmail.com/$email/g" *
-
-# Notify user about the project and scratch directory paths
-echo "Project setup completed successfully."
-echo "Project directory: ${project_dir}"
-echo "Scratch directory: ${scratch_dir}"
+echo "Setup complete."
+echo "Config installed at: ${PROJECT_DIR}/config/pipeline.env"
+echo "Next: run wrappers from ${PROJECT_DIR}/scripts after editing PIPELINE_ROOT/PROJECT if needed."

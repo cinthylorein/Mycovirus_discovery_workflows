@@ -33,6 +33,7 @@ fi
 
 source "$CONFIG"
 
+mkdir -p "$LOG_DIR" "$FASTQC_DIR"
 
 mapfile -t FASTQ_FILES < <(ls -1 "$RAW_DIR"/*.fastq* 2>/dev/null || true)
 N="${#FASTQ_FILES[@]}"

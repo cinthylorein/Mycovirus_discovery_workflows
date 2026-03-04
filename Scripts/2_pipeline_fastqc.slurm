@@ -18,7 +18,9 @@ source "$CONFIG"
 # Load the FastQC module:
 module load FastQC/0.12.1
 
-# Build list of files inside the job (must match wrapper's counting logic)
+mkdir -p "$FASTQC_DIR"
+
+# Build list of files inside the job (don’t pass arrays through sbatch)
 mapfile -t files < <(ls -1 "$RAW_DIR"/*.fastq* 2>/dev/null || true)
 
 if (( ${#files[@]} == 0 )); then

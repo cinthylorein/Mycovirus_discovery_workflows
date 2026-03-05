@@ -1,42 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-## Blastx for Phytophthora Virus Discovery RNA-seq data RNA1, 2, 3 samples
-#Redoing the analysis with "sacc" that means Subject accession rather than sseqid as this has other text such as ref|| which makes it difficult to merge datasets later
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG="${CONFIG:-${SCRIPT_DIR}/../config/pipeline.env}"
 
-IN="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/contigs"
-###loop forcalling multiple folder call them rnaviralspades,1, 2 so on
-OUT="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/blast_results"
-LOG="$OUT/logs"
-BLASTDBnt="/input/genomic/viral/DBs/nr_09122025/nr"
-#NCBI_NonHumanViral_nt_May2025
-BLASTDBRsRP="/input/genomic/viral/DBs/RdRp-scan/nr"
-BLASTDBRVDB="/input/genomic/viral/DBs/RVDB/" 
+if [[ ! -f "$CONFIG" ]]; then
+  echo "ERROR: Config not found: $CONFIG" >&2
+  exit 1
+fi
 
+source "$CONFIG"
 
-mkdir -p $OUT
-mkdir -p $LOG
+IN="$CONTIGS_DIR"
+OUT="$BLAST_DIR"
+BLAST_LOG_DIR="${BLAST_DIR}/logs"
 
+# Cluster-specific DB paths (override via env if needed)
+BLASTDB_NT="${BLASTDB_NT:-/input/genomic/viral/DBs/nr_09122025/nr}"
+BLASTDB_RDRP="${BLASTDB_RDRP:-/input/genomic/viral/DBs/RdRp-scan/nr}"
+BLASTDB_RVDB="${BLASTDB_RVDB:-/input/genomic/viral/DBs/RVDB/}"
 
-#Avoid literal expansion when no files are present
-shopt -s nullglob
+mkdir -p "$LOG_DIR" "$OUT" "$BLAST_LOG_DIR"
 
-# Track submitted job IDs
-declare -a job_ids=()
+# Discover sample contig files (expects: CONTIGS_DIR/<sample>/contigs.fasta)
+mapfile -t CONTIG_FILES < <(ls -1 "$IN"/*/contigs.fasta 2>/dev/null || true)
+if (( ${#CONTIG_FILES[@]} == 0 )); then
+  echo "ERROR: No contigs.fasta found under $IN/*/contigs.fasta" >&2
+  exit 1
+fi
+array_max=$((${#CONTIG_FILES[@]} - 1))
 
-echo "Submitting blastx job"
-job_blastx_nr=$(sbatch --parsable --export=ALL,IN="$IN",OUT="$OUT",LOG="$LOG",BLASTDBnt="$BLASTDBnt" 6_pipeline_blastx_nr.slurm)
+echo "Submitting blastx nr array for ${#CONTIG_FILES[@]} samples (0..$array_max)"
+job_blastx_nr=$(sbatch --parsable \
+  --array=0-"$array_max" \
+  --export=ALL,CONFIG="$CONFIG",IN="$IN",OUT="$OUT",BLAST_LOG_DIR="$BLAST_LOG_DIR",BLASTDB="$BLASTDB_NT" \
+  --output="${LOG_DIR}/blastx_nr_%A_%a.out" \
+  --error="${LOG_DIR}/blastx_nr_%A_%a.err" \
+  6_pipeline_blastx_nr.slurm)
 
-#echo "Submitting BLASTDBRsRP alignment job array..."
-
-#job_blastx_BLASTDBRsRP=$(sbatch --parsable #--export=ALL,IN="$IN",OUT="$OUT",LOG="$LOG",BLASTDBRsRP="$BLASTDBRsRP" pipeline_blastx_RsRP.slurm)
-
-#echo "Submitting Bowtie2 alignment job array..."
-
-#job_blastx_BLASTDBRVDB=$(sbatch --parsable #--export=ALL,IN="$IN",OUT="$OUT",LOG="$LOG",BLASTDBRVDB="$BLASTDBRVDB" pipeline_blastx_RVDB.slurm)
-
-echo " Submitted jobs:"
-echo "   └─ Running blastx_nr:   Job ID $job_blastx_nr"
-#echo "   └─ Running blastx_BLASTDBRsRP:   Job ID $job_blastx_nr"
-#echo "   └─ Running blastx_BLASTDBRVDB:   Job ID $job_blastx_BLASTDBRVDB"
-echo " Monitor with: sacct -j $job_blastx_nr
-#,$job_blastx_BLASTDBRsRP,$job_blastx_BLASTDBRVDB"
+echo "Submitted jobs:"
+echo "  - blastx_nr: $job_blastx_nr"
+echo "Monitor: sacct -j $job_blastx_nr"

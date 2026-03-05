@@ -13,9 +13,9 @@
 
 module load R/4.3.3
 
-#Rscript Summary_table.R --db "$BLASTDB" --inputs "SRR11783490_nt_blast.csv,SRR11783495_nt_blast.csv,SRR11783518_nt_blast.csv" --format blastn --outdir "$LOG_nt"
+Rscript Summary_table.R --db "$BLASTDB" --inputs "$IN_nt/SRR11783490_nt_blast.csv" --format blastn --outdir "$LOG_nt"
 
-Rscript Summary_table.R --db "$BLASTDBtx" --inputs "$IN_tx/SRR11783490_tx_blast.csv" --format blastx --outdir "$LOG_tx"
+#Rscript Summary_table.R --db "$BLASTDBtx" --inputs "$IN_tx/SRR11783490_tx_blast.csv" --format blastx --outdir "$LOG_tx"
 
 #Rscript plot_pident_by_sample.R --input "$LOG_nt/combined_blast_combined.csv" --output "$LOG_nt/pident_by_sample.png"
 
@@ -28,5 +28,4 @@ Rscript plot_pident_by_sample_b.R \
   --filter-max-evalue 1e-5 \
   --filter-min-alnlen 150 \
   --write-filtered "$LOG_nt/filtered_hits.tsv"
-  --highlight-families-file "mycovirus_families.txt"
-#Rscript plot_pident_by_sample.R --input "$LOG_tx/combined_blast_combined.csv" --output "$LOG_tx/txdent_by_sample.png"
+ # --highlight-families-file "mycovirus_families.txt"

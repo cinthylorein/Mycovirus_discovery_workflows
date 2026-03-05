@@ -1,22 +1,32 @@
 #!/bin/bash
-
 #SBATCH -J BowtieBuildIndexHost
-#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Indexhost_%A_%a.out
-#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Indexhost_%A_%a.err 
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=00:30:00
 #SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
 #SBATCH --mail-type=ALL
- 
-# Load the Bowtie2 module:
+
+set -euo pipefail
+set -x
+
 module load bowtie2/2.3.4.3
 
-#Step 1: Build Bowtie2 index
+: "${CONFIG:?CONFIG not set}"
+source "$CONFIG"
+
+: "${REF:?REF not set}"
+: "${INDEX_DIR:?INDEX_DIR not set}"
+
+mkdir -p "$INDEX_DIR"
+
+# Bowtie2-build wants an index "basename", not a directory.
+# We'll write into INDEX_DIR with a fixed basename "host"
+INDEX_BASE="${INDEX_DIR}/host"
+
 echo "Building Bowtie2 index from reference: $REF"
-if bowtie2-build "$REF" "$INDEX"; then
-	printf "Bowtie2 index built successfully at: %s\n" "$INDEX"
-else
-    printf "Failed to build Bowtie2 index for: %s\n" "$REF" >&2
-    exit 1
-fi
+echo "Index basename: $INDEX_BASE"
+
+bowtie2-build "$REF" "$INDEX_BASE"
+
+echo "Index build done."
+module unload bowtie2/2.3.4.3

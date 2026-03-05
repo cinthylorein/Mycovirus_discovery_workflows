@@ -1,12 +1,5 @@
 #!/bin/bash
-
-# This script runs Trimmomatic on all pairs matching SRR*_1.fastq / SRR*_2.fastq
-# Submit with sbatch trim_loop.sh
-#
-# SBATCH directives (adjust as needed)
 #SBATCH -J TRIM
-#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Trim2.out
-#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/Trim2.err
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
 #SBATCH --time=10:00:00
@@ -14,62 +7,76 @@
 #SBATCH --mail-type=ALL
 
 set -euo pipefail
+set -x
 
-# Required environment variables (must be set before running)
-: "${PROJECT:?Need to set PROJECT (path to project root)}"
-: "${TRIMMOMATIC:?Need to set TRIMMOMATIC (path to trimmomatic .jar)}"
-: "${CLIP:?Need to set CLIP (path to adapter file for ILLUMINACLIP)}"
-: "${TRIM_OUT:?Need to set TRIM_OUT (directory for paired output)}"
-: "${UNPAIRED:?Need to set UNPAIRED (directory for unpaired output)}"
+: "${CONFIG:?Need CONFIG exported (path to pipeline.env)}"
+source "$CONFIG"
 
-# Use SLURM-provided CPUs if available, otherwise fallback to 2
-THREADS=${SLURM_CPUS_PER_TASK:-2}
+: "${TRIMMOMATIC_JAR:?Need TRIMMOMATIC_JAR (path to Trimmomatic .jar)}"
+: "${CLIP:?Need CLIP (adapter fasta for ILLUMINACLIP)}"
+: "${TRIM_OUT:?Need TRIM_OUT}"
+: "${UNPAIRED:?Need UNPAIRED}"
+: "${TRIM_LOG_DIR:?Need TRIM_LOG_DIR}"
 
-# Make sure output directories exist
-mkdir -p "${TRIM_OUT}"
-mkdir -p "${UNPAIRED}"
+THREADS="${SLURM_CPUS_PER_TASK:-2}"
 
-# Memory settings for Java - adjust if needed (use environment or SLURM if desired)
-JAVA_MIN_MEM=4G
-JAVA_MAX_MEM=4G
+mkdir -p "$TRIM_OUT" "$UNPAIRED" "$TRIM_LOG_DIR"
 
-# Loop over all read1 files that match SRR*_1.fastq
+# Java memory settings (you can tune; keep consistent with SBATCH --mem)
+JAVA_MIN_MEM="${JAVA_MIN_MEM:-4G}"
+JAVA_MAX_MEM="${JAVA_MAX_MEM:-4G}"
+
 shopt -s nullglob
-read1_list=( "${PROJECT}/raw_reads"/SRR*_1.fastq )
-if [ ${#read1_list[@]} -eq 0 ]; then
-  echo "No SRR*_1.fastq files found in ${PROJECT}/raw_reads. Exiting."
+
+# Support .fastq and .fastq.gz (adjust if you only want .fastq)
+read1_list=( "$RAW_DIR"/SRR*_1.fastq "$RAW_DIR"/SRR*_1.fastq.gz )
+
+if (( ${#read1_list[@]} == 0 )); then
+  echo "ERROR: No SRR*_1.fastq(.gz) files found in $RAW_DIR" >&2
   exit 1
 fi
 
-for read1 in "${read1_list[@]}"; do
-  # derive sample prefix like SRR000001
-  prefix=$(basename "${read1%_1.fastq}")
-  read2="${PROJECT}/raw_reads/${prefix}_2.fastq"
+read1="${read1_list[$SLURM_ARRAY_TASK_ID]:-}"
+if [[ -z "$read1" ]]; then
+  echo "ERROR: No read1 for task $SLURM_ARRAY_TASK_ID (n=${#read1_list[@]})" >&2
+  exit 1
+fi
 
- if [[ ! -f "${read2}" ]]; then
-    echo "Paired file missing for ${prefix}: expected ${read2}. Skipping."
-    continue
-  fi
+# Determine mate + extension
+if [[ "$read1" == *.fastq.gz ]]; then
+  prefix="$(basename "${read1%_1.fastq.gz}")"
+  read2="$RAW_DIR/${prefix}_2.fastq.gz"
+  ext="fastq.gz"
+else
+  prefix="$(basename "${read1%_1.fastq}")"
+  read2="$RAW_DIR/${prefix}_2.fastq"
+  ext="fastq"
+fi
 
-  Out_PAIRED_1="${TRIM_OUT}/${prefix}_trimmomatic_R1.fq"
-  Out_UNPAIRED_1="${UNPAIRED}/${prefix}_trimmomatic_unpaired_1.fq"
-  Out_PAIRED_2="${TRIM_OUT}/${prefix}_trimmomatic_R2.fq"
-  Out_UNPAIRED_2="${UNPAIRED}/${prefix}_trimmomatic_unpaired_2.fq"
+if [[ ! -f "$read2" ]]; then
+  echo "ERROR: Missing mate for $prefix. Expected: $read2" >&2
+  exit 1
+fi
 
-  echo "Starting trimming for ${prefix} (threads=${THREADS})"
-  # run Trimmomatic (PE mode)
-  java -jar -Xms${JAVA_MIN_MEM} -Xmx${JAVA_MAX_MEM} \
-    "${TRIMMOMATIC}" PE -threads "${THREADS}" \
-    "${read1}" "${read2}" \
-    "${Out_PAIRED_1}" "${Out_UNPAIRED_1}" "${Out_PAIRED_2}" "${Out_UNPAIRED_2}" \
-    ILLUMINACLIP:"${CLIP}":2:30:10 SLIDINGWINDOW:5:20 MINLEN:50 \
-    > "${TRIM_OUT}/${prefix}.trimmomatic.log" 2>&1 || {
-      echo "Trimmomatic failed for ${prefix}. See ${TRIM_OUT}/${prefix}.trimmomatic.log"
-      # continue to next sample rather than exiting the whole job
-      continue
-    }
+Out_PAIRED_1="${TRIM_OUT}/${prefix}_trimmomatic_R1.${ext}"
+Out_UNPAIRED_1="${UNPAIRED}/${prefix}_trimmomatic_unpaired_1.${ext}"
+Out_PAIRED_2="${TRIM_OUT}/${prefix}_trimmomatic_R2.${ext}"
+Out_UNPAIRED_2="${UNPAIRED}/${prefix}_trimmomatic_unpaired_2.${ext}"
 
-  echo "Finished ${prefix}. Paired outputs: ${Out_PAIRED_1}, ${Out_PAIRED_2}"
-done
+sample_log="${TRIM_LOG_DIR}/${prefix}.trimmomatic.log"
 
-echo "All done."
+echo "Trimming sample=${prefix}"
+echo "read1=$read1"
+echo "read2=$read2"
+echo "threads=$THREADS"
+echo "out_paired_1=$Out_PAIRED_1"
+echo "out_paired_2=$Out_PAIRED_2"
+
+java -jar -Xms"${JAVA_MIN_MEM}" -Xmx"${JAVA_MAX_MEM}" \
+  "$TRIMMOMATIC_JAR" PE -threads "$THREADS" \
+  "$read1" "$read2" \
+  "$Out_PAIRED_1" "$Out_UNPAIRED_1" "$Out_PAIRED_2" "$Out_UNPAIRED_2" \
+  ILLUMINACLIP:"$CLIP":2:30:10 SLIDINGWINDOW:5:20 MINLEN:50 \
+  > "$sample_log" 2>&1
+
+echo "Done sample=${prefix}"

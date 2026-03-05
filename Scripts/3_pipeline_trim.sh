@@ -14,40 +14,66 @@
   # to include all sequences that you wish to remove:
   # This file is called Illumina.fa and is in the 000.raw directory.
 
-#set -euo pipefail
-# Defining paths
+set -euo pipefail
 
-echo "Defining global variables and directories" 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG="${CONFIG:-${SCRIPT_DIR}/../config/pipeline.env}"
 
-PROJECT="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline"
-TRIM_OUT="${PROJECT}/trimmed_reads"
-UNPAIRED="${TRIM_OUT}/unpaired"
-LOG_DIR="${TRIM_OUT}/logs"
-TRIMMOMATIC="/workspace/cflcyd/software/Trimmomatic/Trimmomatic-0.39/trimmomatic-0.39.jar"
-# Set the path to the adapter file:
-CLIP="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/adapters/Illumina.fa"
+if [[ ! -f "$CONFIG" ]]; then
+  echo "ERROR: Config not found: $CONFIG" >&2
+  exit 1
+fi
+
+source "$CONFIG"
+
+# ---- Tool locations (cluster-specific; keep here, not inside slurm) ----
+TRIMMOMATIC_JAR="${TRIMMOMATIC_JAR:-/workspace/cflcyd/software/Trimmomatic/Trimmomatic-0.39/trimmomatic-0.39.jar}"
+CLIP="${CLIP:-${ADAPTER_DIR}/Illumina.fa}"
+
+# ---- Output dirs (from config) ----
+TRIM_OUT="$TRIM_DIR"
+UNPAIRED="${TRIM_DIR}/unpaired"
+TRIM_LOG_DIR="${TRIM_DIR}/logs"
+
+mkdir -p "$LOG_DIR" "$TRIM_OUT" "$UNPAIRED" "$TRIM_LOG_DIR"
+
+# Optional: fail early if inputs/tools missing
+if [[ ! -f "$TRIMMOMATIC_JAR" ]]; then
+  echo "ERROR: Trimmomatic jar not found: $TRIMMOMATIC_JAR" >&2
+  exit 1
+fi
+if [[ ! -f "$CLIP" ]]; then
+  echo "ERROR: Adapter file not found: $CLIP" >&2
+  exit 1
+fi
+
+echo "Submitting Trimmomatic job"
+echo "RAW_DIR=$RAW_DIR"
+echo "TRIM_OUT=$TRIM_OUT"
+echo "UNPAIRED=$UNPAIRED"
+echo "CLIP=$CLIP"
+echo "TRIMMOMATIC_JAR=$TRIMMOMATIC_JAR"
+
+# Build list of read1 files to size the array (same patterns as slurm)
+mapfile -t read1_list < <(
+  ls -1 "$RAW_DIR"/SRR*_1.fastq "$RAW_DIR"/SRR*_1.fastq.gz 2>/dev/null || true
+)
+
+if (( ${#read1_list[@]} == 0 )); then
+  echo "ERROR: No SRR*_1.fastq(.gz) files found in $RAW_DIR" >&2
+  exit 1
+fi
+
+array_max=$((${#read1_list[@]} - 1))
+echo "Submitting Trimmomatic array: ${#read1_list[@]} samples (0..$array_max)"
 
 
-mkdir -p $UNPAIRED
-mkdir -p $LOG_DIR
+job_trim=$(sbatch --parsable \
+  --array=0-"$array_max" \
+  --export=ALL,CONFIG="$CONFIG",TRIMMOMATIC_JAR="$TRIMMOMATIC_JAR",CLIP="$CLIP",TRIM_OUT="$TRIM_OUT",UNPAIRED="$UNPAIRED",TRIM_LOG_DIR="$TRIM_LOG_DIR" \
+  --output="${LOG_DIR}/trim_%A_%a.out" \
+  --error="${LOG_DIR}/trim_%A_%a.err" \
+  3_pipeline_trim.slurm)
 
-
-#Avoid literal expansion when no files are present
-shopt -s nullglob
-
-# Track submitted job IDs
-declare -a job_ids=()
-
-echo "Submitting Trimmomatic jobs for files in: ${PROJECT}"
-
-
-#Submit Trimmed job based on input files 
-
-job_trim=$(sbatch --export=TRIMMOMATIC="$TRIMMOMATIC",LOG_DIR="$LOG_DIR",TRIM_OUT="$TRIM_OUT",UNPAIRED="$UNPAIRED",PROJECT="$PROJECT",CLIP="$CLIP" 3_pipeline_trim.slurm)
-
-
-echo " Submitted jobs:"
-echo "   └─ Trimmomatic index:   Job ID $job_trim"
-echo " Monitor with: sacct -j $job_trim"
-# It is critical to set the -X settings for Java for the program to run correctly
-# Here, the VM is instantiated with 8GB of heap space, with a max of 8GB...
+echo "Submitted: $job_trim"
+echo "Monitor: sacct -j $job_trim"

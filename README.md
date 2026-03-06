@@ -1,123 +1,196 @@
-# Virus discovery workflow
+# Mycovirus discovery workflows (Slurm/HPC)
 
-This repository provides virus-discovery workflows configured for the powerPlant and Nesi HPC systems (Slurm). They accept your sequencing data and can be used to mine SRA datasets for mycoviruses. 
+This repository provides virus-discovery workflows configured for **PowerPlant** and **NeSI** HPC systems (Slurm). The workflows accept your sequencing data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows).
 
-The workflow creates a standardized project folder structure and a set of scripts to speed up analysis. 
+The pipeline creates/uses a standardized project folder structure and a set of scripts to speed up analysis.
 
+---
 
+## Table of contents
+- [Quick start](#quick-start)
+- [Repository layout](#repository-layout)
+- [Configuration (`config/pipeline.env`)](#configuration-configpipelineenv)
+- [Workflow overview](#workflow-overview)
+- [Step-by-step scripts (host-aware pipeline)](#step-by-step-scripts-host-aware-pipeline)
+- [Outputs](#outputs)
+- [HPC tips (logs, monitoring, reruns)](#hpc-tips-logs-monitoring-reruns)
+- [Acknowledgments](#acknowledgments)
+- [How to cite this repo](#how-to-cite-this-repo)
 
---------------------
-### Table of Contents
-- [Virus discovery workflow](#Virus-discovery-workflow)
-    - [Table of Contents](#table-of-contents)
-      - [Installation](#installation)
-      - [Workflow](#Workflow)
-      - [Acknowledgments](#acknowledgments)
-      - [How to cite this repo?](#how-to-cite-this-repo)
+---
 
---------------------
+## Quick start
 
-## Installation
-
-1. Clone the repository: git clone https://github.com/cinthylorein/Virus_discovery_workflows.git
-
-2. Change into the scripts directory: cd Virus_discovery_workflows/scripts
-
-(If you downloaded and unpacked a ZIP from GitHub you may get a directory named Virus_discovery_workflows-main; adapt the path accordingly, e.g. cd Virus_discovery_workflows-main/scripts.)
-
-3. Convert CRLF to Unix LF and then set the executable bit. From the repository root:
-
+### 1) Clone the repository
 ```bash
-# Convert line endings for all top-level .sh files
-sed -i 's/\r$//' *.sh
-
-# On macOS (BSD sed) use:
-# sed -i '' -e 's/\r$//' *.sh
-
-# Alternative if you have dos2unix:
-# dos2unix *.sh
-
-# Then make scripts executable
-chmod +x *.sh
+git clone https://github.com/cinthylorein/Mycovirus_discovery_workflows.git
+cd Mycovirus_discovery_workflows
 ```
 
-4. Edit the setup.sh file: update the root, project and email variables to match your environment.
+### 2) Make scripts executable (and fix CRLF if needed)
+If you edited files on Windows and see `/bin/bash^M` errors, convert line endings to Unix LF:
 
-5. Run the setup script: ./setup.sh
+```bash
+# from repo root
+find Scripts -type f \( -name "*.sh" -o -name "*.slurm" \) -print0 | xargs -0 sed -i 's/\r$//'
+chmod +x Scripts/*.sh
+```
 
-Notes about the scripts
+### 3) Create your pipeline configuration
+This pipeline expects a config file (example path below):
+- `config/pipeline.env`
 
-Each general task has two files: a .sh shell wrapper and a .slurm job script. The .sh file passes parameters and environment variables to the .slurm script. In normal use you usually only edit the .sh wrapper; the .slurm file typically does not need changes.
-The scripts are designed to run on batches: they expect an input file listing sample filenames (one per line) to process multiple samples in a single run.
+Create it (or copy from an example if you add one later), and set directories such as:
+- `RAW_DIR`, `TRIM_DIR`, `MAPPING_DIR`, `CONTIGS_DIR`, `BLAST_DIR`, `LOG_DIR`, `ADAPTER_DIR`, etc.
 
---------------------
+Then run wrappers like:
+```bash
+cd Scripts
 
-## Workflow
+# Option A: set CONFIG once per session
+export CONFIG="$PWD/../config/pipeline.env"
 
-This repository contains two virus‑discovery pipelines illustrated in the figure bellow. Use (A) when you know the host genome and want to remove host reads before virus discovery; use (B) when you do not remove host reads (environmental or unknown‑host samples) or when starting from SRA accessions.
+# Run steps
+./2_pipeline_fastqc.sh
+./3_pipeline_trim.sh
+./4_pipeline_bowtie2.sh
+./5_pipeline_spades.sh
+./6_pipeline_blastx.sh
+./7_pipeline_summary_result.sh
+```
+
+---
+
+## Repository layout
+
+Top-level:
+- `Scripts/` — pipeline wrappers (`*.sh`) and Slurm job scripts (`*.slurm`)
+- `adapters/` — adapter FASTA files (e.g. `Illumina.fa`)
+- `accession_lists/` — lists of accessions (if running SRA workflows). There is an example file to test before run your own data. 
+- `images/` — workflow diagrams and example plots
+- `README.md`
+
+> Convention used in this repo: most steps have two files:
+> - a `*.sh` wrapper (sets config, creates directories, submits Slurm jobs)
+> - a `*.slurm` job script (runs on the cluster)
+
+---
+
+## Configuration (`config/pipeline.env`)
+
+The pipeline is designed to avoid hardcoded `/workspace/...` paths. Instead, you define your project layout in an environment file and export it when submitting jobs.
+
+Typical variables include:
+
+- `RAW_DIR` — raw FASTQs (e.g. `.../raw_reads`)
+- `TRIM_DIR` — trimmed reads
+- `MAPPING_DIR` — Bowtie2 non-host reads
+- `CONTIGS_DIR` — assembly output (SPAdes contigs)
+- `BLAST_DIR` — BLAST outputs
+- `LOG_DIR` — Slurm stdout/stderr logs for wrappers/jobs
+- `ADAPTER_DIR` — adapter FASTA location
+
+Cluster-specific tools/DBs may also be configured via variables:
+- `TRIMMOMATIC_JAR`
+- `REF` (host reference fasta for Bowtie2 index)
+- `BLASTDB_NT`, `BLASTDB_RDRP`, `BLASTDB_RVDB`, etc.
+
+---
+
+## Workflow overview
+
+This repository contains host-aware virus-discovery approaches (see image).
 
 ![Pipeline overview](images/Workflow.png)
 
-### Overview
+### Host-aware pipeline (typical)
+1. QC raw reads (FastQC)
+2. Trim adapters/low-quality bases (Trimmomatic)
+3. Build Bowtie2 index + remove host reads
+4. Assemble non-host reads (SPAdes rnaviralspades)
+5. Search contigs with BLASTx / databases
+6. Summarize results + plots (R)
 
-- Pipeline — host-aware (recommended when you have the host reference)
-  - Purpose: remove host-derived reads first to reduce background, then assemble and search for viral contigs.
-  - Typical use case: metatranscriptomes sequenced from a known host (e.g., *Botrytis cinerea*).
 ---
 
-### Pipeline (host-aware) — step-by-step
+## Step-by-step scripts (host-aware pipeline)
 
-1. Set up directories and environment
-   - Run the project setup script that creates the standard folder layout:
-2. Quality control (FastQC)
-   - Input: raw FASTQ files in `scratch/.../raw_reads`.
-   - Quick QC to check library quality before trimming.
+Run these from `Scripts/` (each wrapper submits Slurm jobs):
 
-3. Trim reads and assemble transcripts
-   - Trimming: Trimmomatic (or equivalent) to remove adapters and low-quality bases.
-   - Assembly: trinity/megahit/rna assembler to build contigs from trimmed reads.
+1. **FastQC**  
+   - Wrapper: `Scripts/2_pipeline_fastqc.sh`  
+   - Slurm: `Scripts/2_pipeline_fastqc.slurm`  
+   - Input: `$RAW_DIR`  
+   - Output: `$FASTQC_DIR`
 
-4. Build host index and remove host reads
-   - Build a Bowtie2 index of the host transcriptome/genome.
-   - Align reads to host and remove aligned reads (keeps likely non‑host reads for viral discovery).
+2. **Trimming (Trimmomatic)**  
+   - Wrapper: `Scripts/3_pipeline_trim.sh`  
+   - Slurm: `Scripts/3_pipeline_trim.slurm`  
+   - Input: `$RAW_DIR`  
+   - Output: `$TRIM_DIR`
 
-5. Assemble viral contigs
-   - Assemble the host‑filtered reads (SPAdes).
-   - Result: candidate contigs enriched for non‑host sequences.
+3. **Host removal (Bowtie2)**  
+   - Wrapper: `Scripts/4_pipeline_bowtie2.sh`  
+   - Slurm: `Scripts/4_pipeline_bowtie2_build_index.slurm`, `Scripts/4_pipeline_bowtie2.slurm`  
+   - Input: `$TRIM_DIR`  
+   - Output: `$MAPPING_DIR` (non-host paired reads)
 
-6. BLAST/annotation/search steps
-   - Run BLASTx and against NR/NT as needed.
-   - Typical scripts:
-     - `_blastx.sh`, `_blastnt.sh`
-7. Create summary table and visualization
-   - Outputs:
-     - A CSV summary table (e.g. summary_table.csv) containing one row per contig/sample pair.
-     - A figure file showing percent identity by sample (example: images/pident_by_sample.png). This plot helps quickly assess how similar candidate contigs are to known viruses across samples and to visualise family-level identification.
-   - Example: Summary plot generated by the pipeline:
+4. **Assembly (SPAdes / rnaviralspades)**  
+   - Wrapper: `Scripts/5_pipeline_spades.sh`  
+   - Slurm: `Scripts/5_pipeline_spades.slurm`  
+   - Input: `$MAPPING_DIR`  
+   - Output: `$CONTIGS_DIR/<sample>/contigs.fasta`
 
-      The figure shows the initial BLASTx result of contigs from RNA libraries (Phytophthora RNA 1–3) sharing similarity with virus protein database post de novo assembly.
+5. **Search / annotation (BLASTx)**  
+   - Wrapper: `Scripts/6_pipeline_blastx.sh`  
+   - Slurm: `Scripts/6_pipeline_blastx_nr.slurm`  
+   - Input: `$CONTIGS_DIR/*/contigs.fasta`  
+   - Output: `$BLAST_DIR/*`
 
-      ![BLASTx results of contigs that do not share nucleotide similarity with P. agathidicida](images/pident_by_sample.png)
+6. **Summaries + plots (R)**  
+   - Wrapper: `Scripts/7_pipeline_summary_result.sh`  
+   - Slurm: `Scripts/7_pipeline_summary_result.slurm`  
 
+---
 
-### Example: Summary table 
+## Outputs
 
-| contig_id | sample_id | contig_length | abundance_TPM | read_count | best_db | best_hit_accession | best_hit_description | percent_identity | align_length | evalue | bitscore | taxid | lineage | classification | notes |
-|---|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|---|---|---|
-| contig_0001_sampleA | sampleA | 3258 | 1523.4 | 4821 | nr | YP_009724389.1 | RNA-dependent RNA polymerase [Hypothetical virus X] | 98.5 | 310 | 1e-120 | 460 | 12345 | Riboviria; Picornavirales; Caliciviridae; Norovirus | likely | RdRp hit high identity; RdRp-scan positive |
-| contig_0002_sampleB | sampleB | 1412 | 210.1 | 873 | RVDB | RVDB_ABC12345 | Capsid protein [Uncharacterized virus Y] | 92.3 | 250 | 2e-60 | 320 | 67890 | Riboviria; Narnavirales; Narnaviridae; Mitovirus | likely | RVDB hit; taxid from RVDB mapping |
-| contig_0005_sampleC | sampleC | 2187 | 320.9 | 1104 | RdRpScan | RdRp_000987654 | Conserved RdRp domain [novel virus fragment] | 89.9 | 400 | 3e-80 | 410 | 33445 | Riboviria; Unclassified_RdRp | likely | Detected by RdRp-scan; no close nr hit |
+Typical outputs:
+- QC: FastQC HTML and zip reports
+- Trim: paired + unpaired FASTQs + per-sample trimming logs
+- Mapping: non-host paired reads from Bowtie2
+- Assembly: `contigs.fasta` per sample
+- BLAST: per-sample results tables (`.tsv` / `.csv`)
+- Summary: combined tables + plots (e.g., percent identity plots)
 
+---
 
-Note:
-The pipeline depends on server-installed reference databases (NR, NT, RVDB, RdRp-Scan), software modules, and taxonomy files (NCBI taxdb, taxize, RVDB tax). These resources are not downloaded automatically and must be present on the server.
+## HPC tips (logs, monitoring, reruns)
 
---------------------
+### Where are logs?
+- Wrapper-submitted Slurm logs are written to `$LOG_DIR` (e.g. `fastqc_%A_%a.out`)
+- Many steps also write per-sample tool logs into step-specific `logs/` directories.
+
+### Monitor jobs
+```bash
+squeue -u $USER
+sacct -j <jobid>
+```
+
+### Rerun a failed array task
+```bash
+# example: rerun only task 7 of array job 123456
+sbatch --array=7 Scripts/<job>.slurm
+```
+
+---
 
 ## Acknowledgments
-I'd like to acknowledge of the Holmes Lab for their contributions to the development of the USYD Artemis workflow which inspires this one.
+Inspired by workflows developed in the Holmes Lab (USYD Artemis workflow).
 
---------------------
+---
 
-## How to cite this repo?
-If this repo was somehow useful a citation would be greatly appeciated! Available at: https://github.com/cinthylorein/Virus_discovery_workflows.
+## How to cite this repo
+If this repository is useful in your work, a citation would be appreciated:
+
+- Repository: https://github.com/cinthylorein/Mycovirus_discovery_workflows

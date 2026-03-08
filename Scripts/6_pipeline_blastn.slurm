@@ -1,56 +1,55 @@
 #!/bin/bash
-
 #SBATCH -J blastn_batch
-#SBATCH -o /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/blastn_%A_%a.out
-#SBATCH -e /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/logs/blastn_%A_%a.err
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=18:00:00
 #SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
 #SBATCH --mail-type=ALL
 
-set -o pipefail
+set -euo pipefail
+set -x
 
-main() {
-    module load ncbi-blast/2.11.0 || {
-        printf "Failed to load BLAST module\n" >&2
-        return 1
-    }
-	
-    local samples=(SRR*)
+module load ncbi-blast/2.11.0
 
-    local base_dir="$IN"
-    local out_dir="$OUT"
-    local log_dir="$LOG"
-    #local BLASTDB="/your/blast/db/path/nt"  # Replace this with actual BLAST DB path
+: "${CONFIG:?CONFIG not set}"
+source "$CONFIG"
 
-    mkdir -p "$out_dir" "$log_dir"
+: "${IN:?IN not set}"
+: "${OUT:?OUT not set}"
+: "${BLASTDB:?BLASTDB not set}"
 
-    local fasta; local sample; local outfile
+mkdir -p "$OUT"
 
-   for fasta in "$base_dir"/"$samples"/contigs.fasta; do
-   
-        if [[ ! -s "$fasta" ]]; then
-            printf "Skipping missing or empty file: %s\n" "$fasta" >&2
-            continue
-        fi
+threads="${SLURM_CPUS_PER_TASK:-2}"
 
-        sample=$(basename "$(dirname "$fasta")")
-        outfile="${out_dir}/${sample}_nt_blast.csv"
+# Discover contigs in a stable order (same logic as wrapper)
+shopt -s nullglob
+contig_files=( "$IN"/*/contigs.fasta )
 
-        printf "Running BLASTN for sample: %s\n" "$sample"
+if (( ${#contig_files[@]} == 0 )); then
+  echo "ERROR: No contigs.fasta found under $IN/*/contigs.fasta" >&2
+  exit 1
+fi
 
-        if ! blastn -db "$BLASTDB" \
-            -query "$fasta" \
-            -outfmt '6 qseqid sacc pident staxid ssciname length mismatch gapopen qstart qend sstart send evalue bitscore qlen' \
-            -max_target_seqs 5 \
-            -num_threads 2 \
-            -out "$outfile"; then
-            printf "BLAST failed for %s\n" "$fasta" >&2
-        fi
-    done
+fasta="${contig_files[$SLURM_ARRAY_TASK_ID]:-}"
+if [[ -z "$fasta" || ! -s "$fasta" ]]; then
+  echo "ERROR: Missing/empty fasta for task $SLURM_ARRAY_TASK_ID: $fasta" >&2
+  exit 1
+fi
 
-    module unload ncbi-blast/2.11.0
-}
+sample="$(basename "$(dirname "$fasta")")"
+outfile="${OUT}/${sample}_nt_blast.tsv"
+sample_log="${OUT}/logs/${sample}.blastn.log"
 
-main "$@"
+mkdir -p "${OUT}/logs"
+
+blastn -db "$BLASTDB" \
+  -query "$fasta" \
+  -outfmt "6 qseqid sacc pident staxid ssciname length mismatch gapopen qstart qend sstart send evalue bitscore qlen" \
+  -max_target_seqs 5 \
+  -num_threads "$threads" \
+  -out "$outfile" \
+  > "$sample_log" 2>&1
+
+module unload ncbi-blast/2.11.0
+echo "Done sample=$sample out=$outfile"

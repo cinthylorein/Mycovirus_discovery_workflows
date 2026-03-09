@@ -1,0 +1,45 @@
+﻿Genus,Species,Virus_name,Isolate,Accession,Available_sequence,Abbrev
+Alphahypovirus,Alphahypovirus alternariae,Alternaria alternata hypovirus 1,YL-3C,MK189193,Coding-complete genome,AaHV1
+Alphahypovirus,Alphahypovirus americanum,Cryphonectria hypovirus 2,NB58,L29010,Complete genome,CHV2
+Alphahypovirus,Alphahypovirus bipolaridis,Bipolaris oryzae hypovirus 1,ES35,MH316122,Complete genome,BoHV1
+Alphahypovirus,Alphahypovirus botrytidis,Botrytis cinerea hypovirus 2,BCS3_DN9124,MN617169,Coding-complete genome,BcHV2
+Alphahypovirus,Alphahypovirus cryphonectriae,Cryphonectria hypovirus 1,EP713,M57938,Complete genome,CHV1
+Alphahypovirus,Alphahypovirus fusarii,Fusarium graminearum hypovirus 1,HN10,MK279472,Coding-complete genome,FgHV1
+Alphahypovirus,Alphahypovirus insecti,Wuhan insect virus 14,WHZM10168,KX883007,Coding-complete genome,WHIV14
+Alphahypovirus,Alphahypovirus japonicum,Fusarium sambucinum hypovirus 1,Fs1837h,LC596823,Complete genome,FsHV1
+Alphahypovirus,Alphahypovirus macrophominae,Macrophomina phaseolina hypovirus 2,2012-022,MT062425,Coding-complete genome,MpHV2
+Alphahypovirus,Alphahypovirus macrophominae,Macrophomina phaseolina hypovirus 1,Mp2003b,KP900893,Partial genome (non-compliant),MpHV1
+Alphahypovirus,Alphahypovirus sacchari,Fusarium sacchari hypovirus 1,F206,MN295969,Complete genome,FsHV1
+Alphahypovirus,Alphahypovirus trichodermae,Trichoderma asperellum hypovirus 1,CBS 1131938,MK279475,Coding-complete genome,TaHV1
+Betahypovirus,Betahypovirus americanum,Cryphonectria hypovirus 4,SR2,AY307099,Complete genome,CHV4
+Betahypovirus,Betahypovirus cryphonectriae,Cryphonectria hypovirus 3,GH2 (WY),AF188515,Complete genome,CHV3
+Betahypovirus,Betahypovirus fusarii,Fusarium oxysporum dianthi hypovirus 2,,MN176979,Complete genome,FodHV2
+Betahypovirus,Betahypovirus phomopsis,Phomopsis longicolla hypovirus isolate ME711,,KF537784,Complete genome,PlHV1
+Betahypovirus,Betahypovirus sclerotiniae,Sclerotinia sclerotiorum hypovirus 1 strain SZ-150,,JF781304,Complete genome,SsHV1
+Betahypovirus,Betahypovirus sclerotiniae,Botrytis cinerea hypovirus 3,BCI1_3,MN617170,Complete genome,BcHV3
+Betahypovirus,Betahypovirus setosphaeriae,Setosphaeria turcica hypovirus 1 strain StHv128A,,MK279474,Coding-complete genome,StHV1
+Betahypovirus,Betahypovirus sinensis,Botrytis cinerea hypovirus 1,HBtom-372,MG554632,Complete genome,BcHV1
+Betahypovirus,Betahypovirus trichodermae,Trichoderma harzianum hypovirus 1,T-70,MN172262,Complete genome,ThHV1
+Betahypovirus,Betahypovirus valsae,Valsa ceratosperma hypovirus 1,MVC86,AB690372,Complete genome,VcHV1
+Deltahypovirus,Deltahypovirus sinicum,Beihai hypo-like virus 1,BHZC36965,KX883006,Coding-complete genome,BH-LV1
+Deltahypovirus,Deltahypovirus sipunculidi,Beihai sipunculid worm virus 6,BHNXC41400,KX883005,Coding-complete genome,BHSWV6
+Epsilonhypovirus,Epsilonhypovirus agarici,Agaricus bisporus virus 2 strain C19-C1,3,KY357507,Partial genome (non-compliant),AbV2
+Epsilonhypovirus,Epsilonhypovirus entoleucae,Entoleuca hypovirus 1,97-14,MF536690,Complete genome,EnHV1
+Epsilonhypovirus,Epsilonhypovirus entoleucae,Rosellinia necatrix hypovirus 2,Rn118-8,LC333733,Coding-complete genome,RnHV2
+Epsilonhypovirus,Epsilonhypovirus japonicum,Fusarium poae hypovirus 1,MAFF 240374,LC150612,Coding-complete genome,FpHV1
+Epsilonhypovirus,Epsilonhypovirus japonicum,Fusarium graminearum hypovirus 2,JS16,KP208178,Complete genome,FgHV2
+Epsilonhypovirus,Epsilonhypovirus roselliniae,Rosellinia necatrix hypovirus 1 strain Rn-Ca,,LC318482,Complete genome,RnHV1
+Epsilonhypovirus,Epsilonhypovirus sclerotiniae,Sclerotinia homoeocarpa hypovirus 1 strain ShHvLT11,,MK279473,Coding-complete genome,ShHV1
+Epsilonhypovirus,Epsilonhypovirus sinicum,Fusarium langsethiae hypovirus 1 isolate FlHV1/AH32,,KY120321,Complete genome,FlHV1
+Etahypovirus,Etahypovirus sclerotii,Sclerotium rolfsii hypovirus 8,BLH-1-3,MH766503,Coding-complete genome,SrHV8
+Gammahypovirus,Gammahypovirus atheliae,Sclerotium rolfsii hypovirus 4 strain BLH-19,,MH766499,Coding-complete genome,SrHV4
+Gammahypovirus,Gammahypovirus meridionalis,Sclerotium rolfsii hypovirus 5 strain BLH-1-20,,MH766500,Coding-complete genome,SrHV5
+Gammahypovirus,Gammahypovirus sclerotii,Sclerotium rolfsii hypovirus 2 strain BLH-1-17,,MH766497,Coding-complete genome,SrHV2
+Gammahypovirus,Gammahypovirus sinensis,Sclerotium rolfsii hypovirus 3 strain BLH-18,,MH766498,Coding-complete genome,SrHV3
+Gammahypovirus,Gammahypovirus uredi,Sclerotium rolfsii hypovirus 7 strain BLH-1-2,,MH766502,Coding-complete genome,SrHV7
+Thetahypovirus,Thetahypovirus botrytidis,Botrytis cinerea hypovirus 4,BCS17_DN134,MN617171,Coding-complete genome,BcHV4
+Thetahypovirus,Thetahypovirus rhizoctoniae,Rhizoctonia solani hypovirus 1,BR20,MK558259,Coding-complete genome,RsHV1
+Thetahypovirus,Thetahypovirus sclerotii,Sclerotium rolfsii hypovirus 1,BLH-1,MH037014,Complete genome,SrHV1
+Thetahypovirus,Thetahypovirus sclerotiniae,Sclerotinia sclerotiorum hypovirus 2,HBStr-470,MH347276,Coding-complete genome,SsHV2
+Thetahypovirus,Thetahypovirus sclerotiniae,Botrytis cinerea hypovirus 5,BCI10_DN5057,MT157414,Coding-complete genome,BcHV5
+Zetahypovirus,Zetahypovirus sclerotiniae,Sclerotinia sclerotiorum hypovirus 6 strain BLH-1-1,,MH766501,Coding-complete genome,SrHV6

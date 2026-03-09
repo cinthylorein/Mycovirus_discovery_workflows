@@ -1,0 +1,106 @@
+﻿Genus,Species,Virus_name,Isolate,Accession,Available_sequence,Abbrev
+Duamitovirus,Duamitovirus alal1,Alternaria alternata mitovirus 1,3Sy3,MK584829,Coding-complete genome,AaMV1
+Duamitovirus,Duamitovirus azfi1,Azolla filiculoides mitovirus 1,Stockholm1,BK010423,Coding-complete genome,AzfiMV1
+Duamitovirus,Duamitovirus bevu1,Beta vulgaris mitovirus 1,VDH66156,MG721540,Coding-complete genome,BevuMV1
+Duamitovirus,Duamitovirus boci1,Botrytis cinerea mitovirus 1,CanBc-1c-78,EF580100,Complete genome,BcMV-1
+Duamitovirus,Duamitovirus boci3,Botrytis cinerea mitovirus 3,pi285.8,LN827942,Coding-complete genome,BcMV-3
+Duamitovirus,Duamitovirus bodo1,Botryosphaeria dothidea mitovirus 1,HNLJ-1,MT676452,Complete genome,BdMV1
+Duamitovirus,Duamitovirus busp1,Buergenerula spartinae mitovirus 1,YDC07,KJ485703,Complete genome,BsMV1
+Duamitovirus,Duamitovirus casa1,Cannabis sativa mitovirus 1,Purple Kush,BK010428,Coding-complete genome,CasaMV1
+Duamitovirus,Duamitovirus cesp1,Ceratobasidium mitovirus 1,MUT4210,MN736968,Coding-complete genome,CbMV1
+Duamitovirus,Duamitovirus chqu1,Chenopodium quinoa mitovirus 1,IPSP1,MF375475,Complete genome,CqMV1
+Duamitovirus,Duamitovirus clod1,Clitocybe odora virus,Holm,HE717021,Complete genome,COV
+Duamitovirus,Duamitovirus crpa1,Cryphonectria mitovirus 1,NB631,L31849,Complete genome,CMV1
+Duamitovirus,Duamitovirus dapi1,Dahlia pinnata mitovirus 1,Rio Riata,BK010429,Coding-complete genome,DapiMV1
+Duamitovirus,Duamitovirus epni1,Epicoccum nigrum mitovirus 1,34SY2,MK584828,Coding-complete genome,EnMV1
+Duamitovirus,Duamitovirus fubo1,Fusarium boothii mitovirus 1,Ep-BL13,LC425112,Complete genome,FbMV1
+Duamitovirus,Duamitovirus fupo3,Fusarium poae mitovirus 3,MAFF 240374,LC150566,Coding-complete genome,FpMV3
+Duamitovirus,Duamitovirus fupo4,Fusarium poae mitovirus 4,MAFF 240374,LC150567,Coding-complete genome,FpMV4
+Duamitovirus,Duamitovirus gima1,Gigaspora margarita mitovirus 1,BEG34,MG256173,Coding-complete genome,GmMV1
+Duamitovirus,Duamitovirus gima2,Gigaspora margarita mitovirus 2,BEG34,MG256174,Coding-complete genome,GmMV2
+Duamitovirus,Duamitovirus gima3,Gigaspora margarita mitovirus 3,BEG34,MG256175,Coding-complete genome,GmMV3
+Duamitovirus,Duamitovirus gima4,Gigaspora margarita mitovirus 4,BEG34,MG256176,Coding-complete genome,GmMV4
+Duamitovirus,Duamitovirus hean1,Heterobasidion mitovirus 1,an1,KJ873059,Complete genome,HetMV1
+Duamitovirus,Duamitovirus hean3,Heterobasidion mitovirus 3,an1,MN058208,Complete genome,HetMV3
+Duamitovirus,Duamitovirus hepa3,Heterobasidion [parviporum] mitovirus 3,pa3,MN058214,Coding-complete genome,HetMV3
+Duamitovirus,Duamitovirus hulu1,Humulus lupulus mitovirus 1,Karahanasou,BK010431,Coding-complete genome,HuluMV1
+Duamitovirus,Duamitovirus nepa1,Neofusicoccum parvum mitovirus 1,7AS3,MK584831,Coding-complete genome,NpMV1
+Duamitovirus,Duamitovirus nior1,Nigrospora oryzae mitovirus 1,CS-7.5-4,MH823901,Complete genome,NoMV1
+Duamitovirus,Duamitovirus opno1a,Ophiostoma mitovirus 1a,Ld,AM087548,Complete genome,OMV1a
+Duamitovirus,Duamitovirus opno1b,Ophiostoma mitovirus 1b,Ld,AM087549,Complete genome,OMV1b
+Duamitovirus,Duamitovirus opno1c,Ophiostoma mitovirus 1c,93-1224,KF026355,Complete genome,OMV1c
+Duamitovirus,Duamitovirus opno3a,ophiostoma mitovirus 3a,OnuLd,AJ004930,Complete genome,OMV3a
+Duamitovirus,Duamitovirus opno3b,Ophiostoma mitovirus 3b,Ld,AM087550,Complete genome,OMV3b
+Duamitovirus,Duamitovirus oxru1,Oxybasis rubra mitovirus 1,374,BK010427,Coding-complete genome,OxruMV1
+Duamitovirus,Duamitovirus peex1,Petunia exserta mitovirus 1,OPGC 943,BK010426,Coding-complete genome,PeexMV1
+Duamitovirus,Duamitovirus rhce1,Rhizoctonia cerealis mitovirus 1,AG-DI/R1084,KM517201,Complete genome,RcMV1
+Duamitovirus,Duamitovirus rhir1,Rhizophagus irregularis mitovirus 1,9,MH732933,Complete genome,RirMV1
+Duamitovirus,Duamitovirus rhso21,Rhizoctonia solani mitovirus 21,AG2-2 LP/IBRS23,MK372892,Coding-complete genome,RsMV21
+Duamitovirus,Duamitovirus rhso25,Rhizoctonia solani mitovirus 25,AG2-2 LP/IBRS04,MK372894,Coding-complete genome,RsMV25
+Duamitovirus,Duamitovirus rhso26,Rhizoctonia solani mitovirus 26,AG2-2 LP/IBRS04,MK372895,Coding-complete genome,RsMV26
+Duamitovirus,Duamitovirus rhso27,Rhizoctonia solani mitovirus 27,AG2-2 LP/IBRS04,MK372896,Coding-complete genome,RsMV27
+Duamitovirus,Duamitovirus rhso31,Rhizoctonia solani mitovirus 31,AG2-2 LP IBRS07,MK372900,Coding-complete genome,RsMV31
+Duamitovirus,Duamitovirus rhso32,Rhizoctonia solani mitovirus 32,AG2-2 LP/IBRS23,MK372901,Coding-complete genome,RsMV32
+Duamitovirus,Duamitovirus rhso34,Rhizoctonia solani mitovirus 34,AG2-2 LP/IBRS04,MK372903,Coding-complete genome,RsMV34
+Duamitovirus,Duamitovirus scho1,Sclerotinia homoeocarpa mitovirus,Sh12B,AY172454,Complete genome,ShMV
+Duamitovirus,Duamitovirus scni2,Sclerotinia nivalis mitovirus 2,SsSn-1,KT365896,Complete genome,SnMV2
+Duamitovirus,Duamitovirus scsc3,Sclerotinia sclerotiorum mitovirus 3,ICMP 16235/NZ1,JX401537,Complete genome,SsMV3
+Duamitovirus,Duamitovirus scsc6,Sclerotinia sclerotiorum mitovirus 6,14563,KJ462512,Complete genome,SsMV6
+Duamitovirus,Duamitovirus soch1,Solanum chacoense mitovirus 1,G4,BK010425,Coding-complete genome,SochMV1
+Duamitovirus,Duamitovirus tuae1,Tuber aestivum mitovirus,Jaszag 2,HQ992989,Complete genome,TaMV
+Kvaramitovirus,Kvaramitovirus opno7,Ophiostoma mitovirus 7,93-1224,KF031943,Complete genome,OpMV7
+Triamitovirus,Triamitovirus cespA,Ceratobasidium mitovirus A,Murdoch-1,KU291923,Coding-complete genome,CbMVA
+Triamitovirus,Triamitovirus gesu1,Geopora sumneriana mitovirus 1,ANK Akata & Altuntas 92,MN043682,Complete genome,GsMV1
+Triamitovirus,Triamitovirus rhcl1,Rhizophagus sp. RF1 mitovirus 1,,AB558120,Complete genome,RpMV1
+Triamitovirus,Triamitovirus rhor1,Rhizoctonia oryzae-sativae mitovirus 1,89-1,KU057949,Complete genome,RoMV1
+Triamitovirus,Triamitovirus rhso1,Rhizoctonia mitovirus 1 RS002,AG-3PT/RS002,KC792591,Complete genome,RMV-1-RS002
+Triamitovirus,Triamitovirus rhso23,Rhizoctonia solani mitovirus 23,AG2-2 LP/IBRS07,MK375261,Coding-complete genome,RsMV23
+Triamitovirus,Triamitovirus rhso30,Rhizoctonia solani mitovirus 30,AG2-2 LP/IBRS19,MK372899,Coding-complete genome,RsMV30
+Triamitovirus,Triamitovirus rhso39,Rhizoctonia solani mitovirus 39,AG2-2IIIB/RR17,MN448505,Complete genome,RsMV39
+Triamitovirus,Triamitovirus tuex1,Tuber excavatum mitovirus,Lammspringe,JN222389,Complete genome,TeMV
+Unuamitovirus,Unuamitovirus agbi1,Agaricus bisporus mitovirus 1,A15 1283,KY357500,Coding-complete genome,AbMV1
+Unuamitovirus,Unuamitovirus alar1,Alternaria arborescens mitovirus 1,EGS 39-128,LC145036,Complete genome,AaMV1
+Unuamitovirus,Unuamitovirus albr1,Alternaria brassicicola mitovirus 1,HXY12-15,KP705075,Complete genome,AbMV1
+Unuamitovirus,Unuamitovirus boci2,Botrytis cinerea mitovirus 2,pi285.8,LN827941,Coding-complete genome,BcMV-2
+Unuamitovirus,Unuamitovirus boci4,Botrytis cinerea mitovirus 4,V448,LN827947,Coding-complete genome,BcMV-4
+Unuamitovirus,Unuamitovirus crri1,Cronartium ribicola mitovirus 1,BC-u3,KT921179,Complete genome,CrMV1
+Unuamitovirus,Unuamitovirus crri2,Cronartium ribicola mitovirus 2,BC-u3,KT921180,Complete genome,CrMV2
+Unuamitovirus,Unuamitovirus crri3,Cronartium ribicola mitovirus 3,BC-u3,KT921181,Complete genome,CrMV3
+Unuamitovirus,Unuamitovirus crri4,Cronartium ribicola mitovirus 4,BC-u3,KT921182,Complete genome,CrMV4
+Unuamitovirus,Unuamitovirus crri5,Cronartium ribicola mitovirus 5,BC-u3,KT921183,Complete genome,CrMV5
+Unuamitovirus,Unuamitovirus diru1,Diaporthe rudis mitovirus 1,5E,MT216310,Coding-complete genome,DrMV1
+Unuamitovirus,Unuamitovirus enmu1,Entomophthora muscae mitovirus 1,KVL-14-117,MK682513,Coding-complete genome,EnmuMV1
+Unuamitovirus,Unuamitovirus enmu2,Entomophthora muscae mitovirus 2,KVL-14-117,MK682514,Coding-complete genome,EnmuMV2
+Unuamitovirus,Unuamitovirus enmu3,Entomophthora muscae mitovirus 3,KVL-14-117,MK682515,Coding-complete genome,EnmuMV3
+Unuamitovirus,Unuamitovirus enmu4,Entomophthora muscae mitovirus 4,KVL-14-117,MK682516,Coding-complete genome,EnmuMV4
+Unuamitovirus,Unuamitovirus enmu5,Entomophthora muscae mitovirus 5,KVL-14-117,MK682517,Coding-complete genome,EnmuMV5
+Unuamitovirus,Unuamitovirus enmu6,Entomophthora muscae mitovirus 6,KVL-14-117,MK682518,Coding-complete genome,EnmuMV6
+Unuamitovirus,Unuamitovirus enmu7,Entomophthora muscae mitovirus 7,KVL-14-117,MK682519,Coding-complete genome,EnmuMV7
+Unuamitovirus,Unuamitovirus enmu8,Entomophthora muscae mitovirus 8,Berkeley,BK010736,Coding-complete genome,EnmuMV8
+Unuamitovirus,Unuamitovirus fuan1,Fusarium andiyazi mitovirus 1,Fa162-ARG,MT506025,Coding-complete genome,FaMV1
+Unuamitovirus,Unuamitovirus fuci1,Fusarium circinatum mitovirus 1,FcCa070,KF803546,Complete genome,FcMV1
+Unuamitovirus,Unuamitovirus fuci2,Fusarium circinatum mitovirus 2-1,FcCa070,KF803547,Complete genome,FcMV2-1
+Unuamitovirus,Unuamitovirus fuco1,Fusarium coeruleum mitovirus 1,MAFF 235976,LC006129,Complete genome,FcoMV1
+Unuamitovirus,Unuamitovirus fugl1,Fusarium globosum mitovirus 1,MAFF 237511,LC006128,Complete genome,FgMV1
+Unuamitovirus,Unuamitovirus fuox1,Fusarium oxysporum f. sp. dianthi mitovirus 1,Fod 312,MN586595,Complete genome,FodMV1
+Unuamitovirus,Unuamitovirus fupo1,Fusarium poae mitovirus 1,MAFF 240374,LC150564,Coding-complete genome,FpMV1
+Unuamitovirus,Unuamitovirus fupo2,Fusarium poae mitovirus 2,MAFF 240374,LC150565,Coding-complete genome,FpMV2
+Unuamitovirus,Unuamitovirus fuve1,Fusarium verticillioides mitovirus 1,FvSec505-ARG,MT506024,Coding-complete genome,FvMV1
+Unuamitovirus,Unuamitovirus grab1,Gremmeniella mitovirus S1,Luu7,AF534641,Complete genome,GaMRV-S1
+Unuamitovirus,Unuamitovirus grab2,Gremmeniella abietina mitovirus 2,AU58,JN654496,Complete genome,GMV2
+Unuamitovirus,Unuamitovirus hean2,Heterobasidion mitovirus 2,94233,MN058206,Complete genome,HetMV2
+Unuamitovirus,Unuamitovirus hemo1,Helicobasidium mompa mitovirus 1-18,V18,AB110977,Complete genome,HmMV1-18
+Unuamitovirus,Unuamitovirus hyal1,Hymenoscyphus fraxineus [albidus] mitovirus 1,Ha_F_CAR10,MK079847,Coding-complete genome,HfMV1
+Unuamitovirus,Unuamitovirus hyfr1,Hymenoscyphus fraxineus mitovirus 1,C436,KJ667051,Coding-complete genome,HfMV1
+Unuamitovirus,Unuamitovirus lebi1,Leptosphaeria biglobosa mitovirus 1,H3-38,MG659316,Complete genome,LbMV1
+Unuamitovirus,Unuamitovirus nior2,Nigrospora oryzae mitovirus 2,CS-7.5-4,MH823902,Complete genome,NoMV2
+Unuamitovirus,Unuamitovirus opno4,ophiostoma mitovirus 4,OnuLd,AJ132754,Complete genome,OMV4
+Unuamitovirus,Unuamitovirus opno5,ophiostoma mitovirus 5,OnuLd,AJ132755,Complete genome,OMV5
+Unuamitovirus,Unuamitovirus opno6,ophiostoma mitovirus 6,OnuLd,AJ132756,Complete genome,OMV6
+Unuamitovirus,Unuamitovirus pust1,Puccinia striiformis mitovirus 1,SCSN-10,MK033478,Complete genome,PsMV1
+Unuamitovirus,Unuamitovirus scni1,Sclerotinia nivalis mitovirus 1,SsSn-1,KT365895,Complete genome,SnMV1
+Unuamitovirus,Unuamitovirus scsc1,Sclerotinia sclerotiorum mitovirus 1,KL-1,JQ013377,Complete genome,SsMV1
+Unuamitovirus,Unuamitovirus scsc2,Sclerotinia sclerotiorum mitovirus 2,KL-1,JQ013378,Complete genome,SsMV2
+Unuamitovirus,Unuamitovirus scsc4,Sclerotinia sclerotiorum mitovirus 4,ICMP 16235,JX401538,Complete genome,SsMV4
+Unuamitovirus,Unuamitovirus scsc7,Sclerotinia sclerotiorum mitovirus 7,Lu471,KJ462514,Complete genome,SsMV7
+Unuamitovirus,Unuamitovirus thba1,Thielaviopsis basicola mitovirus,BK18,AY563138,Complete genome,CeMV

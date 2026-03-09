@@ -1,0 +1,75 @@
+﻿Genus,Subgenus,Species,Virus_name,Isolate,Accession,Available_sequence,Abbrev
+Allexivirus,Acarallexivirus,Allexivirus alphallii,garlic virus A,Sumi,AB010300,Complete genome,GarVA
+Allexivirus,Acarallexivirus,Allexivirus betallii,garlic virus B,Mesi 13,KM379144,Complete genome,GarVB
+Allexivirus,Acarallexivirus,Allexivirus chiallii,garlic virus C,Sumi,AB010302,Complete genome,GarVC
+Allexivirus,Acarallexivirus,Allexivirus deltallii,garlic virus D,SW10,KF555653,Complete genome,GarVD
+Allexivirus,Acarallexivirus,Allexivirus ecsallii,garlic virus X,Korea,U89243,Complete genome,GarVX
+Allexivirus,Acarallexivirus,Allexivirus ecsascalonicum,shallot virus X,Kanyuka,M97264,Complete genome,ShVX
+Allexivirus,Acarallexivirus,Allexivirus epsalii,garlic virus E,YH,AJ292230,Complete genome,GarVE
+Allexivirus,,Allexivirus epsilonrubi,blackberry virus E,BB_Ellis-1,JN053266,Complete genome,BVE
+Allexivirus,,Allexivirus filumallii,garlic mite-borne filamentous virus,,X98991,Partial genome (non-compliant),GarMbFV
+Allexivirus,,Allexivirus latensvanillae,Vanilla latent virus,CRV2148ALL,MF150239,Complete genome,VLV
+Allexivirus,,Allexivirus pintoi,Arachis pintoi virus,Var A,KX058345,Complete genome,ApV
+Allexivirus,,Allexivirus rehmanniae,Rehmannia allexivirus,59,PP097219,Complete genome,ReAV
+Allexivirus,,Allexivirus sennae,Senna severe yellow mosaic virus,,MN031278,Complete genome,SSYMV
+Allexivirus,,Allexivirus sigmamedicagonis,Alfalfa virus S,98.3A,KY696659,Complete genome,AVS
+Botrexvirus,,Botrexvirus duosclerotiniae,Sclerotinia sclerotiorum alphaflexivirus 2,Ss32-9,OQ865609,Complete genome,SsAFV2
+Botrexvirus,,Botrexvirus ecsbotrytis,Botrytis virus X,Howitt,AY055762,Complete genome,BotVX
+Botrexvirus,,Botrexvirus unosclerotiniae,Sclerotinia sclerotiorum alphaflexivirus 1,SsAHS31,ON993219,Complete genome,SsAFV1
+Lolavirus,,Lolavirus latenslolii,lolium latent virus,US1,EU489641,Complete genome,LoLV
+Platypuvirus,,Platypuvirus asinorchis,donkey orchid symptomless virus,Mariginiup11,KC923234,Complete genome,DOSV
+Potexvirus,Mandarivirus,Potexvirus citriflavimaculae,citrus yellow mottle-associated virus,PS,MK957246,Complete genome,CiYMaV
+Potexvirus,Mandarivirus,Potexvirus citriflavivenae,citrus yellow vein clearing virus,CQ,KP313240,Complete genome,CYVCV
+Potexvirus,Mandarivirus,Potexvirus citrindicum,Indian citrus ringspot virus,K1,AF406744,Complete genome,ICRSV
+Potexvirus,,Potexvirus alternantherae,alternanthera mosaic virus,Pennsylavania,AY863024,Complete genome,AltMV
+Potexvirus,,Potexvirus babaci,Babaco mosaic virus,,MF978248,Complete genome,BabMV
+Potexvirus,,Potexvirus bambusae,bamboo mosaic virus,O,D26017,Complete genome,BaMV
+Potexvirus,,Potexvirus chaenostomae,Chaenostoma potexvirus,,OL979628,Complete genome,ChPV
+Potexvirus,,Potexvirus colombiense,Cassava Colombian symptomless virus,,KC505252,Complete genome,CsCSV
+Potexvirus,,Potexvirus cymbidii,cymbidium mosaic virus,Singapore,U62963,Complete genome,CymMV
+Potexvirus,,Potexvirus ecsadenii,Adenium obesum virus X,,OR039325,Complete genome,AobVX
+Potexvirus,,Potexvirus ecsadenii,desert rose mottle virus,,OR240084,Complete genome,DRMoV
+Potexvirus,,Potexvirus ecsallii,allium virus X,Netherlands,FJ670570,Complete genome,AVX
+Potexvirus,,Potexvirus ecsalstroemeriae,alstroemeria virus X,Japan,AB206396,Complete genome,AlsVX
+Potexvirus,,Potexvirus ecscacti,cactus virus X,Taiwan,AF308158,Complete genome,CVX
+Potexvirus,,Potexvirus ecscaricae,papaya virus X,Yuto,MN265368,Coding-complete genome,PapVX
+Potexvirus,,Potexvirus ecschlumbergerae,schlumbergera virus X,K11,AY366207,Complete genome,SchVX
+Potexvirus,,Potexvirus ecscnidii,Cnidium virus X,,LC460456,Complete genome,CnVX
+Potexvirus,,Potexvirus ecsdioscoreae,yam virus X,T551,KJ711908,Complete genome,YVX
+Potexvirus,,Potexvirus ecshibisci,Hibiscus virus X,,PP115950,Coding-complete genome,HiVX
+Potexvirus,,Potexvirus ecshostae,hosta virus X,Kr,AJ620114,Complete genome,HVX
+Potexvirus,,Potexvirus ecslactucae,lettuce virus X,Karaj,AM745758,Complete genome,LeVX
+Potexvirus,,Potexvirus ecslilii,lily virus X,Netherlands,AJ633822,Complete genome,LVX
+Potexvirus,,Potexvirus ecsmanihotis,cassava virus X,Ven164,KY288487,Complete genome,CsVX
+Potexvirus,,Potexvirus ecsmenthae,mint virus X,NCGR MEN 454,AY789138,Complete genome,MVX
+Potexvirus,,Potexvirus ecsnerinis,nerine virus X,J,AB219105,Complete genome,NVX
+Potexvirus,,Potexvirus ecsopuntiae,opuntia virus X,CC10,AY366209,Complete genome,OpVX
+Potexvirus,,Potexvirus ecsphaii,phaius virus X,Japan,AB353071,Complete genome,PhVX
+Potexvirus,,Potexvirus ecspitayae,Pitaya virus X,P37,JF930327,Complete genome,PiVX
+Potexvirus,,Potexvirus ecsplantagonis,plantain virus X,,KR872420,Complete genome,PlVX
+Potexvirus,,Potexvirus ecspotati,potato virus X,X3,D00344,Complete genome,PVX
+Potexvirus,,Potexvirus ecsthalassiae,Turtle grass virus X,,MH077559,Complete genome,TGVX
+Potexvirus,,Potexvirus ecstulipae,tulip virus X,J,AB066288,Complete genome,TVX
+Potexvirus,,Potexvirus ecsvanillae,Vanilla virus X,CRV2148POT,MF150240,Complete genome,VaVX
+Potexvirus,,Potexvirus eczygocacti,zygocactus virus X,B1,AY366208,Complete genome,ZyVX
+Potexvirus,,Potexvirus flavimaculae,Euonymus yellow mottle associated virus,,MK572000,Complete genome,EYMaV
+Potexvirus,,Potexvirus flavitrifolii,clover yellow mosaic virus,Sit,D29630,Complete genome,ClYMV
+Potexvirus,,Potexvirus flavivenae,Euonymus yellow vein virus ,,MF078061,Complete genome,EYVV
+Potexvirus,,Potexvirus fragariae,strawberry mild yellow edge virus,MY-18,D12517,Complete genome,SMYEV
+Potexvirus,,Potexvirus hydrangeae,hydrangea ringspot virus,PD 109,AY707100,Complete genome,HdRSV
+Potexvirus,,Potexvirus lagenariae,lagenaria mild mosaic virus,,AB546335,Partial genome (non-compliant),LMMV
+Potexvirus,,Potexvirus malvae,malva mosaic virus,Cote,DQ660333,Complete genome,MalMV
+Potexvirus,,Potexvirus marmoraucuba,potato aucuba mosaic virus,Xu,S73580,Complete genome,PAMV
+Potexvirus,,Potexvirus marmordioscoreae,tamus red mosaic virus,IT,JN389521,Complete genome,TRMV
+Potexvirus,,Potexvirus marmormanihotis,cassava common mosaic virus,Brazilian,U23414,Complete genome,CsCMV
+Potexvirus,,Potexvirus marmorplantagonis,plantago asiatica mosaic virus,Solovyev,Z21647,Complete genome,PlAMV
+Potexvirus,,Potexvirus marmorsennae,Senna mosaic virus,,KX196173,Complete genome,SenMV
+Potexvirus,,Potexvirus narcissi,narcissus mosaic virus,Zuidema,D13747,Complete genome,NMV
+Potexvirus,,Potexvirus nesignambrosiae,Ambrosia asymptomatic virus 1,,KF421905,Complete genome,AAV1
+Potexvirus,,Potexvirus papayae,papaya mosaic virus,Sit,D13957,Complete genome,PapMV
+Potexvirus,,Potexvirus pepini,pepino mosaic virus,Sp-13,AF484251,Complete genome,PepMV
+Potexvirus,,Potexvirus setariae,foxtail mosaic virus,Bancroft,M62730,Complete genome,FoMV
+Potexvirus,,Potexvirus triasparagi,asparagus virus 3,J,AB304848,Complete genome,AV3
+Potexvirus,,Potexvirus triasparagi,scallion virus X,,AJ316085,Complete genome,SVX
+Potexvirus,,Potexvirus trifolii,white clover mosaic virus,Forster,X06728,Complete genome,WClMV
+Sclerodarnavirus,,Sclerodarnavirus sclerotiniae,Sclerotinia sclerotiorum debilitation-associated RNA virus,China,AY147260,Complete genome,SsDRV

@@ -51,7 +51,8 @@ cd Scripts
 # Option A: set CONFIG once per session
 export CONFIG="$PWD/../config/pipeline.env"
 
-# Run steps
+# Run 
+./1_setup.sh
 ./2_pipeline_fastqc.sh
 ./3_pipeline_trim.sh
 ./4_pipeline_bowtie2.sh
@@ -59,6 +60,10 @@ export CONFIG="$PWD/../config/pipeline.env"
 ./6_pipeline_blastx.sh
 ./7_pipeline_summary_result.sh
 ```
+
+# Run all script 
+
+./0_Run_all.sh (will run part 1 of the workflow)
 
 ---
 
@@ -104,55 +109,57 @@ Note: If you are running the example or your metatranscriptomic are from *B cine
 
 ## Workflow overview
 
-This repository contains host-aware virus-discovery approaches (see image).
+This repository contains host-aware virus-discovery-characterization approaches (see image).
 
-![Pipeline overview](images/Workflow.png)
+![Pipeline overview](images/CompleteWorkflow.png)
 
-### Host-aware pipeline (typical)
-1. QC raw reads (FastQC)
-2. Trim adapters/low-quality bases (Trimmomatic)
-3. Build Bowtie2 index + remove host reads
-4. Assemble non-host reads (SPAdes rnaviralspades)
-5. Search contigs with BLASTx / databases
-6. Summarize results + plots (R)
+### Host-aware pipeline part 1 virus-discovery(typical)
+1. Set up directories
+2. QC raw reads (FastQC)
+3. Trim adapters/low-quality bases (Trimmomatic)
+4. Build Bowtie2 index + remove host reads
+5. Assemble non-host reads (SPAdes rnaviralspades)
+6. Search contigs with BLASTx / databases
+7. Summarize results + plots (R)
 
+![Pipeline overview part1](images/Workflow_part1.png)
 ---
 
 ## Step-by-step scripts (host-aware pipeline)
 
 Run these from `Scripts/` (each wrapper submits Slurm jobs):
 
-1. **FastQC**  
+2. **FastQC**  
    - Wrapper: `Scripts/2_pipeline_fastqc.sh`  
    - Slurm: `Scripts/2_pipeline_fastqc.slurm`  
    - Input: `$RAW_DIR`  
    - Output: `$FASTQC_DIR`
 
-2. **Trimming (Trimmomatic)**  
+3 **Trimming (Trimmomatic)**  
    - Wrapper: `Scripts/3_pipeline_trim.sh`  
    - Slurm: `Scripts/3_pipeline_trim.slurm`  
    - Input: `$RAW_DIR`  
    - Output: `$TRIM_DIR`
 
-3. **Host removal (Bowtie2)**  
+4. **Host removal (Bowtie2)**  
    - Wrapper: `Scripts/4_pipeline_bowtie2.sh`  
    - Slurm: `Scripts/4_pipeline_bowtie2_build_index.slurm`, `Scripts/4_pipeline_bowtie2.slurm`  
    - Input: `$TRIM_DIR`  
    - Output: `$MAPPING_DIR` (non-host paired reads)
 
-4. **Assembly (SPAdes / rnaviralspades)**  
+5. **Assembly (SPAdes / rnaviralspades)**  
    - Wrapper: `Scripts/5_pipeline_spades.sh`  
    - Slurm: `Scripts/5_pipeline_spades.slurm`  
    - Input: `$MAPPING_DIR`  
    - Output: `$CONTIGS_DIR/<sample>/contigs.fasta`
 
-5. **Search / annotation (BLASTx)**  
+6. **Search / annotation (BLASTx)**  
    - Wrapper: `Scripts/6_pipeline_blastx.sh`  
    - Slurm: `Scripts/6_pipeline_blastx_nr.slurm`  
    - Input: `$CONTIGS_DIR/*/contigs.fasta`  
    - Output: `$BLAST_DIR/*`
 
-6. **Summaries + plots (R)**  
+7. **Summaries + plots (R)**  
    - Wrapper: `Scripts/7_pipeline_summary_result.sh`  
    - Slurm: `Scripts/7_pipeline_summary_result.slurm`  
 
@@ -169,6 +176,14 @@ Typical outputs:
 - Summary: combined tables + plots (e.g., percent identity plots)
 
 ---
+
+### Host-aware pipeline part 1 virus-characterization
+
+8.	ORF prediction and Traslation
+9.	Extract RdRp/Rep Amino Acid Sequences and add to Reference Mycoviral families alignments 
+10.	Multiple Sequence Alignment
+11.	Model Selection and Tree reconstruction 
+
 
 ## HPC tips (logs, monitoring, reruns)
 

@@ -18,8 +18,6 @@ show_help() {
     echo "  Example:"
     echo "  $0 -f /project/$root_project/$project/accession_lists/mylibs.txt -d /scratch/$root_project/$project/raw_reads"
     echo ""
-    echo " Check the Github page for more information:"
-    echo " https://github.com/JonathonMifsud/BatchArtemisSRAMiner "
     exit 1
 }
 

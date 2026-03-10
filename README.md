@@ -33,6 +33,7 @@ If you edited files on Windows and see `/bin/bash^M` errors, convert line ending
 ```bash
 # from repo root
 find Scripts -type f \( -name "*.sh" -o -name "*.slurm" \) -print0 | xargs -0 sed -i 's/\r$//'
+or 
 chmod +x Scripts/*.sh
 ```
 
@@ -93,6 +94,10 @@ Typical variables include:
 Cluster-specific tools/DBs may also be configured via variables:
 - `TRIMMOMATIC_JAR`
 - `REF` (host reference fasta for Bowtie2 index)
+Note: If you are running the example or your metatranscriptomic are from *B cinerea*. Here there is the genome of reference that was used. 
+![The host reference genome is *Botrytis cinerea*](images/GenomeReferenceBcinerea.png)
+
+
 - `BLASTDB_NT`, `BLASTDB_RDRP`, `BLASTDB_RVDB`, etc.
 
 ---
@@ -194,6 +199,13 @@ bash Scripts/pipeline_check_sra_downloads.sh \
 
 If any runs are missing or partially downloaded, the script will create `missing_sra_ids.txt` in the `-d` directory, which you can use as input for a re-download.
 
+If you dont have access to powerplant and you want to run this workfow in your slurm HPC, you should set up the modules and the databases to blast agains. 
+
+### SLURM job scripts for updated Databases in you HPC
+Here there are script for download Databases:
+(Scripts/NCBI_database_nr_update.slurm and Scripts/NCBI_database_nt_update.slurm) to automate updating the NCBI nr and nt BLAST databases using update_blastdb.pl. Each script loads ncbi-blast/2.11.0, configures job resources (2 CPUs, 10G RAM, walltime), logging and email notifications, and sets a DBDIR pointing to the target database directory. Note: the update_blastdb.pl calls currently pass the literal string "DBDIR" as --source; this should be changed to use the variable (e.g. --source "$DBDIR") or the actual directory path.
+
+Note: please set up your eviroment paths according to where you will run your analysis (HPC locations) 
 ---
 
 ## Acknowledgments

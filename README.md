@@ -183,6 +183,17 @@ sacct -j <jobid>
 sbatch --array=7 Scripts/<job>.slurm
 ```
 
+### Check SRA download completeness (optional)
+If you are downloading SRA reads (e.g., `SRR*`) as part of the workflow, you can verify that all expected accessions were downloaded (and that paired-end downloads have both `_1` and `_2` files) using:
+
+```bash
+bash Scripts/pipeline_check_sra_downloads.sh \
+  -f /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/accession_lists/accessions.txt \
+  -d /workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/raw_reads
+```
+
+If any runs are missing or partially downloaded, the script will create `missing_sra_ids.txt` in the `-d` directory, which you can use as input for a re-download.
+
 ---
 
 ## Acknowledgments

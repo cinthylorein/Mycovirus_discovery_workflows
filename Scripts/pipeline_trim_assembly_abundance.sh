@@ -63,5 +63,5 @@ sbatch \
   --output="${LOG_DIR}/trim_assemble_abundance_%A_%a_${project}_$(date +%Y%m%d)_stdout.txt" \
   --error="${LOG_DIR}/trim_assemble_abundance_%A_%a_${project}_$(date +%Y%m%d)_stderr.txt" \
   --export=ALL,project="$project",file_of_accessions="$file_of_accessions",root_project="$root_project" \
-  "/project/$root_project/$project/scripts/JCOM_pipeline_trim_assembly_abundance.slurm"
+  "/project/$root_project/$project/scripts/pipeline_trim_assembly_abundance.slurm"
 s

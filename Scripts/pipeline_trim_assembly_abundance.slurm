@@ -1,151 +1,112 @@
 #!/bin/bash
-
-# This script trims, assembles reads using trimmomatic and megahit, and then quantifies abundance using RSEM
-# It runs with all .fastq.gz files in your raw_reads folder by default,
-# or you can specify the accessions to look for using -f
-
-#SBATCH -J TrimMegaAbun
-#SBATCH -o /workspace/hraczj/Phytophthora_VirusDiscovery_2022/008.blastn/logs/blastn_%A.out
-#SBATCH -e /workspace/hraczj/Phytophthora_VirusDiscovery_2022/008.blastn/logs/blastn_%A.err
-#SBATCH --array=0-2
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
-#SBATCH --time=02:00:00
+#SBATCH -J rsem_abundance
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=12:00:00
 #SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
 #SBATCH --mail-type=ALL
+#SBATCH --output=../logs/rsem_abundance_%A_%a.out
+#SBATCH --error=../logs/rsem_abundance_%A_%a.err
 
-# Load necessary modules
-module load megahit
-module load trimmomatic
-module load trinity/2.5.1
+set -euo pipefail
+set -x
+
+# Load modules (edit versions as needed on PowerPlant)
 module load rsem/1.3.0
-module load bowtie2/2.3.3.1
-module load samtools/1.6
-module load jellyfish/2.2.6
-module load salmon/0.8.2
-module load java/jdk1.8.0_111
-module unload bowtie2/2.2.5
-module unload perl/5.20.1
+module load bowtie2
+module load samtools
 module load perl/5.24.0
 
-# Define functions
-
-# Function to quality trim and remove adapter sequences from reads
-readTrimmomatic() {
-    # In case the TruSeq3 adapters are not in path we will download them to the working directory
-    # Check the file as sometimes it doesn't download properly and results in unknown trimmer error
-    # We use phread33 because there is a common error if you don't specify this
-    # and as far as I am aware all illumina (and all modern metagenomic?) reads are phread33
-
-    if [[ "$layout" == "single" ]]; then
-        cp /project/"$root_project"/"$project"/adapters/TruSeq3-SE.fa ./
-        echo -e "MEGAHIT_SCRIPT: READ TRIMMOMATIC SINGLE - READ QC"
-        # Quality control for single-end reads
-        trimmomatic SE \
-            -threads "$CPU" \
-            -phred33 \
-            "$inpath"/"$library_id".fastq.gz \
-            /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed.fastq.gz \
-            ILLUMINACLIP:TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:5 LEADING:5 TRAILING:5 MINLEN:25
-    fi
-    if [[ "$layout" == "paired" ]]; then
-        cp /project/"$root_project"/"$project"/adapters/joint_TruSeq3_Nextera-PE.fa ./
-        echo -e "MEGAHIT_SCRIPT: READ TRIMMOMATIC PAIRED - READ QC"
-        trimmomatic PE \
-            -phred33 \
-            -threads "$CPU" \
-            "$inpath"/"$library_id"_1.fastq.gz "$inpath"/"$library_id"_2.fastq.gz \
-            /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed_R1.fastq.gz /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_removed_R1.fastq.gz /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed_R2.fastq.gz /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_removed_R2.fastq.gz \
-            ILLUMINACLIP:joint_TruSeq3_Nextera-PE.fa:2:30:10 SLIDINGWINDOW:4:5 LEADING:5 TRAILING:5 MINLEN:25
-    fi
-}
-
-function callMegahit() {
-    if [[ "$layout" == "single" ]]; then
-        #echo -e "MEGAHIT_SCRIPT: MEGAHIT single - START"
-        megahit --num-cpu-threads "$CPU" \
-            --memory 0.9 \
-            -r /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed.fastq.gz \
-            -o "$outpath"/"$library_id"_out
-    fi
-
-    if [[ "$layout" == "paired" ]]; then
-        #echo -e "MEGAHIT_SCRIPT: MEGAHIT PAIRED - START"
-        megahit --num-cpu-threads "$CPU" \
-            --memory 0.9 \
-            -1 /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed_R1.fastq.gz \
-            -2 /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed_R2.fastq.gz \
-            -o "$outpath"/"$library_id"_out
-    fi
-
-    # edit the contig name for later analyses and move all to current dir
-    cat "$outpath"/"$library_id"_out/final.contigs.fa | sed "s/=//g" | sed "s/ /_/g" >"$outfinal"/"$library_id".contigs.fa
-    cp "$outpath"/"$library_id"_out/log "$outlogs"/"$library_id".log
-    rm -r "$outpath"/"$library_id"_out
-}
-
-function callRSEM() {
-
-    if [[ "$layout" == "single" ]]; then
-        /usr/local/trinity/2.5.1/util/align_and_estimate_abundance.pl --transcripts "$outfinal"/"$library_id".contigs.fa \
-            --seqType fq \
-            --single /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed.fastq.gz \
-            --est_method RSEM \
-            --aln_method bowtie2 \
-            --output_dir /scratch/"$root_project"/"$project"/abundance/"$library_id"_abundance \
-            --thread_count "$CPU" \
-            --prep_reference
-    fi
-
-    if [[ "$layout" == "paired" ]]; then
-        /usr/local/trinity/2.5.1/util/align_and_estimate_abundance.pl --transcripts "$outfinal"/"$library_id".contigs.fa \
-            --seqType fq \
-            --left /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed_R1.fastq.gz \
-            --right /scratch/"$root_project"/"$project"/trimmed_reads/"$library_id"_trimmed_R2.fastq.gz \
-            --est_method RSEM \
-            --aln_method bowtie2 \
-            --output_dir /scratch/"$root_project"/"$project"/abundance/"$library_id"_abundance \
-            --thread_count "$CPU" \
-            --prep_reference
-    fi
-    cp /scratch/"$root_project"/"$project"/abundance/"$library_id"_abundance/RSEM.isoforms.results "$outabundance"/"$library_id"_RSEM.isoforms.results
-    rm /scratch/"$root_project"/"$project"/abundance/"$library_id"_abundance/bowtie2.bam
-    rm "$outfinal"/"$library_id".contigs.fa.*
-    #rm -r /project/"$root_project"/"$project"/abundance/"$library_id"_abundance
-}
-
-# Setting variables - you shouldn't really need to change these other than resource allocations
-wd=/project/"$root_project"/"$project"/contigs
-inpath=/scratch/"$root_project"/"$project"/raw_reads                       # location of reads and filenames
-outpath=/project/"$root_project"/"$project"/contigs                        # location of megahit output
-outfinal=/project/"$root_project"/"$project"/contigs/final_contigs         # location of cleaned megahit output
-outlogs=/project/"$root_project"/"$project"/contigs/final_logs             # location of cleaned megahit output
-outabundance=/scratch/"$root_project"/"$project"/abundance/final_abundance # location of cleaned megahit output
-mkdir -p "$outfinal"                                                       # create dir if this doesn't already exist
-mkdir -p "$outlogs"
-mkdir -p "$outabundance"
-CPU=12 # sets the CPU's for megahit
-cd "$wd" || exit
-
-# read in list of file names or accessions for example could be several fastq.gz files (paired or single) or just the accession id's
-readarray -t myarray <"$file_of_accessions"
-export library_run=${myarray["$PBS_ARRAY_INDEX"]}
-library_run_without_path="$(basename -- $library_run)"
-library_id=$(echo $library_run_without_path | sed 's/\.fastq.gz//g' | sed 's/_*//g')
-
-if [ -f "$inpath"/"$library_id"".fastq.gz" ] && [ ! -f "$inpath"/"$library_id""_1.fastq.gz" ]; then #e.g. if SRR1249328.fastq.gz exists and SRR1249328_1.fastq.gz doesn't layout == single
-    export layout="single"
+TRINITY_ALIGN="/usr/local/trinity/2.5.1/util/align_and_estimate_abundance.pl"
+if [[ ! -x "$TRINITY_ALIGN" ]]; then
+  echo "ERROR: Trinity script not executable: $TRINITY_ALIGN" >&2
+  exit 1
 fi
 
-if [ ! -f "$inpath"/"$library_id"".fastq.gz" ] && [ -f "$inpath"/"$library_id""_1.fastq.gz" ]; then #e.g. if SRR1249328.fastq.gz does not exist and SRR1249328_1.fastq.gz does layout == paired
-    export layout="paired"
+: "${CONFIG:?CONFIG not set}"
+source "$CONFIG"
+
+: "${TRIM_DIR:?TRIM_DIR not set in pipeline.env}"
+: "${CONTIGS_DIR:?CONTIGS_DIR not set in pipeline.env}"
+: "${ANNOTATION_DIR:?ANNOTATION_DIR not set in pipeline.env}"
+: "${ACCESSIONS_FILE:?ACCESSIONS_FILE not set (path to SRR list)}"
+
+mkdir -p "$ANNOTATION_DIR/abundance" "$ANNOTATION_DIR/abundance/logs"
+
+# Read accessions, ignore blanks/comments, strip CRLF
+mapfile -t accs < <(grep -vE '^\s*($|#)' "$ACCESSIONS_FILE" | sed 's/\r$//')
+acc="${accs[$SLURM_ARRAY_TASK_ID]:-}"
+if [[ -z "$acc" ]]; then
+  echo "ERROR: No accession for SLURM_ARRAY_TASK_ID=$SLURM_ARRAY_TASK_ID" >&2
+  exit 1
 fi
 
-if [ -f "$inpath"/"$library_id"".fastq.gz" ] && [ -f "$inpath"/"$library_id""_1.fastq.gz" ]; then #e.g. in the case both single and paired read files exist try to assemble using paired files, layout == paired
-    export layout="paired"
+library_id="$(basename "$acc")"
+library_id="${library_id%.fastq.gz}"
+library_id="${library_id%.fastq}"
+
+contigs="${CONTIGS_DIR}/${library_id}/contigs.fasta"
+if [[ ! -s "$contigs" ]]; then
+  echo "ERROR: Missing contigs: $contigs" >&2
+  exit 1
 fi
 
-# Running the functions defined above
-readTrimmomatic
-callMegahit
-callRSEM
+r1="${TRIM_DIR}/${library_id}_trimmomatic_R1.fastq"
+r2="${TRIM_DIR}/${library_id}_trimmomatic_R2.fastq"
+single="${TRIM_DIR}/${library_id}_trimmomatic.fastq"
+
+layout=""
+if [[ -s "$r1" && -s "$r2" ]]; then
+  layout="paired"
+elif [[ -s "$single" ]]; then
+  layout="single"
+else
+  echo "ERROR: Trimmed reads not found for $library_id" >&2
+  echo "Expected paired: $r1 and $r2" >&2
+  echo "or single: $single" >&2
+  exit 1
+fi
+
+CPU="${SLURM_CPUS_PER_TASK:-1}"
+workdir="${ANNOTATION_DIR}/abundance/${library_id}_rsem_work"
+out_isoforms="${ANNOTATION_DIR}/abundance/${library_id}_RSEM.isoforms.results"
+
+mkdir -p "$workdir"
+
+if [[ "$layout" == "paired" ]]; then
+  "$TRINITY_ALIGN" \
+    --transcripts "$contigs" \
+    --seqType fq \
+    --left "$r1" \
+    --right "$r2" \
+    --est_method RSEM \
+    --aln_method bowtie2 \
+    --output_dir "$workdir" \
+    --thread_count "$CPU" \
+    --prep_reference
+else
+  "$TRINITY_ALIGN" \
+    --transcripts "$contigs" \
+    --seqType fq \
+    --single "$single" \
+    --est_method RSEM \
+    --aln_method bowtie2 \
+    --output_dir "$workdir" \
+    --thread_count "$CPU" \
+    --prep_reference
+fi
+
+# Collect result
+isoforms_file="$(ls -1 "$workdir"/*RSEM.isoforms.results 2>/dev/null | head -n 1 || true)"
+if [[ -z "$isoforms_file" || ! -s "$isoforms_file" ]]; then
+  echo "ERROR: RSEM isoforms results not found in $workdir" >&2
+  ls -lah "$workdir" >&2 || true
+  exit 1
+fi
+
+cp -f "$isoforms_file" "$out_isoforms"
+
+# Optional cleanup
+rm -f "$workdir"/bowtie2.bam 2>/dev/null || true
+
+echo "Done: $library_id -> $out_isoforms"

@@ -23,6 +23,11 @@ cp -f "$(dirname "$0")/pipeline.env" "${PROJECT_DIR}/config/pipeline.env"
 
 # Optional: personalize email in the installed config (only if you want it there)
 # (You can also keep email separate; leaving this simple)
+export EMAIL="${EMAIL:-mvop.mycoviromeonline@gmail.com}"
+
+# Ensure EMAIL is present exactly once in the installed config
+grep -v '^export EMAIL=' "${PROJECT_DIR}/config/pipeline.env" > "${PROJECT_DIR}/config/pipeline.env.tmp"
+mv "${PROJECT_DIR}/config/pipeline.env.tmp" "${PROJECT_DIR}/config/pipeline.env"
 echo "export EMAIL=\"${EMAIL}\"" >> "${PROJECT_DIR}/config/pipeline.env"
 
 # Copy scripts into project/scripts

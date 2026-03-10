@@ -1,35 +1,44 @@
 #!/usr/bin/env bash
-#
-# Simple wrapper to submit pipeline_download_sra.slurm as a Slurm job array.
-# Edit the variables below or set them in the environment before running.
-#
-# Usage (edit variables in the script) or:
-#   ROOT_PROJECT=yourroot PROJECT=yourproj ACCESSIONS=/path/to/list.txt MAIL=you@x ./pipeline_download_sra.sh
-#
 set -euo pipefail
 
-echo "Defining global variables and directories"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG="${CONFIG:-${SCRIPT_DIR}/../config/pipeline.env}"
 
+# Optional: if you use pipeline.env for common dirs, load it
+if [[ -f "$CONFIG" ]]; then
+  source "$CONFIG"
+fi
 
-# Ensure required vars are exported from the .sh wrapper
-inpath="/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/accession_lists"
-file_of_accessions="${inpath}/accessions.txt"
+# Where the accession list lives
+INPATH="${INPATH:-/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/accession_lists}"
+ACCESSIONS_FILE="${ACCESSIONS_FILE:-${INPATH}/accessions.txt}"
 
-#Avoid literal expansion when no files are present
-shopt -s nullglob
+# Where to write FASTQs (set this to your raw reads directory)
+OUTDIR="${OUTDIR:-${RAW_DIR:-/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/raw_reads}}"
 
-# Track submitted job IDs
-declare -a job_ids=()
+if [[ ! -f "$ACCESSIONS_FILE" ]]; then
+  echo "ERROR: accessions file not found: $ACCESSIONS_FILE" >&2
+  exit 1
+fi
 
-echo "Downloading metatranscriptomes from SRA-NCBI in: ${inpath}"
+# Count non-empty, non-comment lines
+n=$(grep -vE '^\s*($|#)' "$ACCESSIONS_FILE" | wc -l | tr -d ' ')
+if (( n == 0 )); then
+  echo "ERROR: No accessions found in $ACCESSIONS_FILE" >&2
+  exit 1
+fi
+array_max=$((n - 1))
 
+mkdir -p "$OUTDIR"
 
-#Submit FastQC job based on input files 
+echo "Submitting SRA download array: ${n} accessions (0..$array_max)"
+echo "  ACCESSIONS_FILE=$ACCESSIONS_FILE"
+echo "  OUTDIR=$OUTDIR"
 
-job_sra=$(sbatch --export=inpath="$inpath",file_of_accessions="$file_of_accessions" pipeline_download_sra.slurm) 
+job_sra=$(sbatch --parsable \
+  --array=0-"$array_max" \
+  --export=ALL,ACCESSIONS_FILE="$ACCESSIONS_FILE",OUTDIR="$OUTDIR" \
+  "${SCRIPT_DIR}/pipeline_download_sra.slurm")
 
-echo " Submitted jobs:"
-echo "   └─ sratoolkit index: $job_sra"
-echo " Monitor with: sacct -j $job_sra"
-# It is critical to set the -X settings for Java for the program to run correctly
-# Here, the VM is instantiated with 8GB of heap space, with a max of 8GB...
+echo "Submitted job: $job_sra"
+echo "Monitor: sacct -j $job_sra"

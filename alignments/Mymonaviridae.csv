@@ -1,0 +1,75 @@
+﻿Genus,Species,Virus_name,Isolate,Accession,Available_sequence,Abbrev
+Auricularimonavirus,Auricularimonavirus armillariae,Armillaria mellea negative strand RNA virus 2,ELDO17,BK014417,Complete genome,AmNSRV2
+Auricularimonavirus,Auricularimonavirus auriculariae,Auricularia heimuer negative-stranded RNA virus 1,CCMJ1222,MT259204,Complete genome,AhNRSV1
+Auricularimonavirus,Auricularimonavirus bondarzewiae,Bondarzewia berkeleyi negative-strand RNA virus 1,FD-104,MT447187,Complete genome,BbNSRV1
+Botrytimonavirus,Botrytimonavirus alphabotrytidis,Botrytis cinerea negative-stranded RNA virus 5,BCS15-DN100,MN617152,Coding-complete genome,BcNSRV5
+Botrytimonavirus,Botrytimonavirus alphabotrytidis,Sclerotinia sclerotiorum negative-stranded RNA virus 10,2018SS,MT646378,Partial genome (non-compliant),SsNSRV10
+Botrytimonavirus,Botrytimonavirus botrytidis,Botrytis cinerea negative-stranded RNA virus 7,BCS13_DN1,MT157413,Coding-complete genome,BcNSRV7
+Botrytimonavirus,Botrytimonavirus botrytidis,Sclerotinia sclerotiorum negative-stranded RNA virus 11,2016SS,MT646406,Partial genome (non-compliant),SsNSRV11
+Botrytimonavirus,Botrytimonavirus glycinis,soybean leaf-associated negative-stranded RNA virus 3,1,KT598228,Partial genome (non-compliant),SLaNSRV3
+Botrytimonavirus,Botrytimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 2A,A2,MF444279,Coding-complete genome,SsNSRV2A
+Botrytimonavirus,Botrytimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 2,500,KP900931,Coding-complete genome,SsNSRV2
+Botrytimonavirus,Botrytimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 4,257,KP900930,Coding-complete genome,SsNSRV4
+Botrytimonavirus,Botrytimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 4A,,MF444282,Partial genome (non-compliant),SsNSRV4A
+Hubramonavirus,Hubramonavirus fusarii,Fusarium oxysporum mymonavirus 1,LJ3-3,OM049502,Complete genome,FoMyV1
+Hubramonavirus,Hubramonavirus golovinomycesae,Golovinomyces cichoracearum negative-stranded RNA virus 1,UMSG3,MCBQ01018032,Complete genome,GcNSRV1
+Hubramonavirus,Hubramonavirus hubeiense,Húběi rhabdo-like virus 4,arthropodmix13990,KX884403,Partial genome (non-compliant),HbRLV4
+Hubramonavirus,Hubramonavirus terrae,H2BulkLitter1223 virus,H2_Bulk_Litter_12_scaffold_23,MN034260,Coding-complete genome,H2BLV
+Hubramonavirus,Hubramonavirus vitis,grapevine-associated mononega-like virus 3,,MW648481,Complete genome,GaMLV3
+Lentimonavirus,Lentimonavirus armillariae,Armillaria mellea negative-stranded RNA virus 1,CMW3973,MW423801,Complete genome,AmNSRV1
+Lentimonavirus,Lentimonavirus lentinulae,Lentinula edodes negative-stranded RNA virus 1,HG3,LC466007,Complete genome,LeNSRV1
+Penicillimonavirus,Penicillimonavirus alphaerysiphe,Erysiphe necator associated negative-stranded RNA virus 2,PMS5_DN69581,MN617061,Coding-complete genome,EnaNSRV2
+Penicillimonavirus,Penicillimonavirus alphapenicillii,Penicillium adametzioides negative-stranded RNA virus 1,7Sy1,MK584858,Partial genome (non-compliant),PaNsRV1
+Penicillimonavirus,Penicillimonavirus alphaplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 1,DMG-A_DN36040,MN556995,Partial genome (non-compliant),PvaMV1
+Penicillimonavirus,Penicillimonavirus betaerysiphe,Erysiphe necator associated negative-stranded RNA virus 5,PMS10_154,MN617042,Coding-complete genome,EnaNSRV5
+Penicillimonavirus,Penicillimonavirus betapenicillii,Penicillium glabrum negative-stranded RNA virus 1,21Sy1,MK584853,Partial genome (non-compliant),PgRlV1
+Penicillimonavirus,Penicillimonavirus betaplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 4,DMG-G_DN44042,MN556999,Partial genome (non-compliant),PvaMV4
+Penicillimonavirus,Penicillimonavirus betaplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 2,DMS5_DN39757,MN556997,Partial genome (non-compliant),PvaMV2
+Penicillimonavirus,Penicillimonavirus cercosporae,Cercospora beticola negative-stranded virus 3,CFNKY-BZ2-8,MZ599588,Coding-complete genome,CbNSV3
+Penicillimonavirus,Penicillimonavirus deltaplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 5,DMG-A_DN32949,MN557000,Partial genome (non-compliant),PvaMV5
+Penicillimonavirus,Penicillimonavirus epsilonplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 6,DMG-F_DN40135,MN557001,Partial genome (non-compliant),PvaMV6
+Penicillimonavirus,Penicillimonavirus etaplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 9,DMG-B_Contig8,MN557005,Partial genome (non-compliant),PvaMV9
+Penicillimonavirus,Penicillimonavirus gammaerysiphe,Erysiphe necator associated negative-stranded RNA virus 6,PMS3_236,MN617052,Coding-complete genome,EnaNSRV6
+Penicillimonavirus,Penicillimonavirus gammaplasmopara,Plasmopara viticola lesion associated mononegaambi virus 3,DMG-C_DN30838,MN556998,Partial genome (non-compliant),PvaMV3
+Penicillimonavirus,Penicillimonavirus kilnbarnense,Kiln Barn virus,UK1,MF893248,Partial genome (non-compliant),KBV
+Penicillimonavirus,Penicillimonavirus magnaporthe,Magnaporthe oryzae mononegaambi virus 1,937_NGS_MO,MW752165,Coding-complete genome,MoMV1
+Penicillimonavirus,Penicillimonavirus zetaplasmoparae,Plasmopara viticola lesion associated mononegaambi virus 7,DMG-B_DN53555,MN557003,Partial genome (non-compliant),PvaMV7
+Phyllomonavirus,Phyllomonavirus culicis,XiangYun mono-chu-like virus,XY28730,OL700132,Coding-complete genome,
+Phyllomonavirus,Phyllomonavirus gysingense,Gysinge virus,OTU22,MK440629,Partial genome (non-compliant),GYSV
+Phyllomonavirus,Phyllomonavirus phyllospherae,soybean leaf-associated negative-stranded RNA virus 4,1,KT598229,Partial genome (non-compliant),SLaNSRV4
+Plasmopamonavirus,Plasmopamonavirus alphatrichodermae,Trichoderma harzianum mononegavirus 1,19-19,OQ463847,Complete genome,ThMV1
+Plasmopamonavirus,Plasmopamonavirus betatrichodermae,Trichoderma harzianum mononegavirus 2,Sept-28,OQ463848,Complete genome,ThMV2
+Plasmopamonavirus,Plasmopamonavirus erysiphe,Erysiphe necator associated negative-stranded RNA virus 23,PMS3_29,MN617053,Coding-complete genome,EnaNSRV23
+Plasmopamonavirus,Plasmopamonavirus plasmoparae,Plasmopara viticola lesion associated mononegaambi virus 8,DMS1_DN25671,MN557004,Partial genome (non-compliant),PvaMV8
+Rhizomonavirus,Rhizomonavirus mali,apple virus B,WA1,MN386971,Coding-complete genome,APPVB
+Sclerotimonavirus,Sclerotimonavirus alphaalternariae,Alternaria dianthicola negative-stranded RNA virus 1,HNSZ-1,ON843764,Coding-complete genome,AdNSRV1
+Sclerotimonavirus,Sclerotimonavirus alphabotrytidis,Botrytis cinerea negative-stranded RNA virus 3,BSC11_19,MN617150,Complete genome,BcNSRV3
+Sclerotimonavirus,Sclerotimonavirus alphabotrytidis,Sclerotinia sclerotiorum negative-stranded RNA virus 9,2017SS,MT646386,Partial genome (non-compliant),SsNSRV9
+Sclerotimonavirus,Sclerotimonavirus alphaclarireediae,Sclerotinia homoeocarpa TSA contig 1 virus,,JU091017,Partial genome (non-compliant),ShTSA1V
+Sclerotimonavirus,Sclerotimonavirus alphaclarireediae,Sclerotinia homoeocarpa TSA contig 2 virus,,JW826636,Partial genome (non-compliant),ShTSA2V
+Sclerotimonavirus,Sclerotimonavirus alphaplasmoparae,Plasmopara viticola lesion associated mymonavirus 1,DMG-A_DN3868696,MN557002,Partial genome (non-compliant),PvaMV1
+Sclerotimonavirus,Sclerotimonavirus alpharhipicephali,Zhangzhou Mymon tick virus 3,TIGMIC 1,ON746412,Complete genome,
+Sclerotimonavirus,Sclerotimonavirus alternariae,Alternaria tenuissima negative-stranded RNA virus 1,CREA-VE-5AS3,MK584852,Partial genome (non-compliant),AtNsRV1
+Sclerotimonavirus,Sclerotimonavirus asiafusarii,Fusarium asiaticum negative-stranded RNA virus 1,SZ-160,MZ969066,Complete genome,FaNSRV1
+Sclerotimonavirus,Sclerotimonavirus betaalternariae,Alternaria tenuissima negative-stranded RNA virus 2,HB-15,OP566533,Complete genome,AtNSRV2
+Sclerotimonavirus,Sclerotimonavirus betabotrytidis,Botrytis cinerea negative-stranded RNA virus 4,BCS12_DN161,MN617151,Complete genome,BcNSRV4
+Sclerotimonavirus,Sclerotimonavirus betaclarireediae,Sclerotinia homoeocarpa TSA contig 3 virus,,JW828891,Partial genome (non-compliant),ShTSA3V
+Sclerotimonavirus,Sclerotimonavirus betaplasmoparae,Plasmopara viticola lesion associated mononega virus 2,DMG-A_DN34502,MN557006,Partial genome (non-compliant),PvaMV2
+Sclerotimonavirus,Sclerotimonavirus betarhipicephali,Sanya Mymon tick virus 1,TIGMIC 2,ON746413,Complete genome,
+Sclerotimonavirus,Sclerotimonavirus botrytidis,Botrytis cinerea mymonavirus 1,Ecan17-2,MH648611,Complete genome,BcMyV1
+Sclerotimonavirus,Sclerotimonavirus botrytidis,Sclerotinia sclerotiorum negative-stranded RNA virus 7,,MF444285,Coding-complete genome,SsNSRV7
+Sclerotimonavirus,Sclerotimonavirus ceratocystis,Sclerotimonavirus cacaofunestae,Cc_Contig2,BK062943,Coding-complete genome,SVc
+Sclerotimonavirus,Sclerotimonavirus cryphonectriae,Cryphonectria parasitica sclerotimonavirus 1,ACP 28,MT354565,Complete genome,CpSV1
+Sclerotimonavirus,Sclerotimonavirus fusarii,soybean leaf-associated negative-stranded RNA virus 1,0,KT598225,Partial genome (non-compliant),SLaNSRV1
+Sclerotimonavirus,Sclerotimonavirus fusarii,Fusarium graminearum negative-stranded RNA virus 1,HN1,MF276904,Complete genome,FgNSRV1
+Sclerotimonavirus,Sclerotimonavirus illinoisense,soybean leaf-associated negative-stranded RNA virus 2,0,KT598227,Partial genome (non-compliant),SLaNSRV2
+Sclerotimonavirus,Sclerotimonavirus penicillii,Penicillium cairnsense negative-stranded RNA virus 1,CREA-VE-27SY1,MK584851,Partial genome (non-compliant),PcNsRV1
+Sclerotimonavirus,Sclerotimonavirus prolifusarii,Fusarium proliferatum mymonavirus 1,F.1129,OK524200,Complete genome,
+Sclerotimonavirus,Sclerotimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 1,AH98,KJ186782,Complete genome,SsNSRV1
+Sclerotimonavirus,Sclerotimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 3,IL1,KC601997,Coding-complete genome,SsNSRV3
+Sclerotimonavirus,Sclerotimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 1-A,,MF444277,Partial genome (non-compliant),SsNSRV1A
+Sclerotimonavirus,Sclerotimonavirus sclerotiniae,Sclerotinia sclerotiorum negative-stranded RNA virus 3-A,,MF444280,Coding-complete genome,SsNSRV3A
+Sclerotimonavirus,Sclerotimonavirus terrae,H4BulkLitter234 virus,H4_Bulk_Litter_23_scaffold_4,MN035745,Partial genome (non-compliant),H4BLV
+Sclerotimonavirus,Sclerotimonavirus trichodermae,Trichoderma harzianum negative-stranded virus 2,19-23,OQ463851,Complete genome,ThNV2
+Sclerotimonavirus,Sclerotimonavirus xinjiangense,Xīnjiāng mymona-like virus 2,236-k141_383893,MW897041,Coding-complete genome,XjMLV2
+Sclerotimonavirus,Sclerotimonavirus yunnanense,Yúnnán mymona-like virus 1,R1-k141_1515735,MW897022,Coding-complete genome,YnMLV1

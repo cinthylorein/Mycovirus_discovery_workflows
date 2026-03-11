@@ -33,8 +33,9 @@ If you edited files on Windows and see `/bin/bash^M` errors, convert line ending
 ```bash
 # from repo root
 find scripts -type f \( -name "*.sh" -o -name "*.slurm" \) -print0 | xargs -0 sed -i 's/\r$//'
-or 
-chmod +x scripts/*.sh
+find config -type f \( -name "*.env" \) -print0 | xargs -0 sed -i 's/\r$//'
+and
+chmod +x scripts/*.s
 ```
 
 ### 3) Create your pipeline configuration

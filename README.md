@@ -177,7 +177,7 @@ Typical outputs:
 
 ---
 
-### Host-aware pipeline part 1 virus-characterization
+### Host-aware pipeline part 2 virus-characterization
 
 8.	ORF prediction and Traslation
 9.	Extract RdRp/Rep Amino Acid Sequences and add to Reference Mycoviral families alignments 

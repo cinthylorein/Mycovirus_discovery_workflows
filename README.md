@@ -1,6 +1,6 @@
-# Mycovirus discovery workflows (Slurm/HPC)
+# Mycovirus discovery workflow (Slurm/HPC)
 
-This repository provides virus-discovery workflows configured for **PowerPlant** and **NeSI** HPC systems (Slurm). The workflows accept your sequencing data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows).
+This repository provides virus-discovery-characterization workflow configured for **PowerPlant** and **NeSI** HPC systems (Slurm). The workflows accept your sequencing data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows).
 
 The pipeline creates/uses a standardized project folder structure and a set of scripts to speed up analysis.
 
@@ -32,10 +32,9 @@ If you edited files on Windows and see `/bin/bash^M` errors, convert line ending
 
 ```bash
 # from repo root
-find scripts -type f \( -name "*.sh" -o -name "*.slurm" \) -print0 | xargs -0 sed -i 's/\r$//'
-find config -type f \( -name "*.env" \) -print0 | xargs -0 sed -i 's/\r$//'
-and
-chmod +x scripts/*.s
+find Scripts -type f \( -name "*.sh" -o -name "*.slurm" \) -print0 | xargs -0 sed -i 's/\r$//'
+or 
+chmod +x Scripts/*.sh
 ```
 
 ### 3) Create your pipeline configuration
@@ -52,6 +51,14 @@ cd Scripts
 # Option A: set CONFIG once per session
 export CONFIG="$PWD/../config/pipeline.env"
 
+# Metatranscriptome-data
+
+This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
+If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
+
+Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead. 
+
+
 # Run 
 ./1_setup.sh
 ./2_pipeline_fastqc.sh
@@ -61,12 +68,6 @@ export CONFIG="$PWD/../config/pipeline.env"
 ./6_pipeline_blastx.sh
 ./7_pipeline_summary_result.sh
 ```
-# Metatranscriptome-data
-
-This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
-If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
-
-Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead.
 
 # Run all script 
 
@@ -120,7 +121,7 @@ This repository contains host-aware virus-discovery-characterization approaches 
 
 ![Pipeline overview](images/CompleteWorkflow.png)
 
-### Host-aware pipeline part 1 virus-discovery(typical)
+### Host-aware pipeline part 1 virus-discovery
 1. Set up directories
 2. QC raw reads (FastQC)
 3. Trim adapters/low-quality bases (Trimmomatic)
@@ -132,7 +133,7 @@ This repository contains host-aware virus-discovery-characterization approaches 
 ![Pipeline overview part1](images/Workflow_part1.png)
 ---
 
-## Step-by-step scripts (host-aware pipeline)
+## Step-by-step scripts (host-aware pipeline part 1)
 
 Run these from `Scripts/` (each wrapper submits Slurm jobs):
 
@@ -174,7 +175,6 @@ Run these from `Scripts/` (each wrapper submits Slurm jobs):
 
 ## Outputs
 
-Typical outputs:
 - QC: FastQC HTML and zip reports
 - Trim: paired + unpaired FASTQs + per-sample trimming logs
 - Mapping: non-host paired reads from Bowtie2
@@ -190,6 +190,34 @@ Typical outputs:
 9.	Extract RdRp/Rep Amino Acid Sequences and add to Reference Mycoviral families alignments 
 10.	Multiple Sequence Alignment
 11.	Model Selection and Tree reconstruction 
+
+
+Step-by-step scripts (host-aware pipeline part 2)
+
+8.	**ORF prediction and Traslation**
+   - Wrapper:   
+   - Slurm:   
+   - Input:   
+   - Output: 
+   
+9.	**Extract RdRp/Rep Amino Acid Sequences and add to Reference Mycoviral families alignments**
+   - Wrapper:   
+   - Slurm:   
+   - Input:   
+   - Output: 
+10.	**Multiple Sequence Alignment**
+   - Wrapper:   
+   - Slurm:   
+   - Input:   
+   - Output: 
+11.	**Model Selection and Tree reconstruction**
+   - Wrapper:   
+   - Slurm:   
+   - Input:   
+   - Output: 
+   
+Outputs
+
 
 
 ## HPC tips (logs, monitoring, reruns)

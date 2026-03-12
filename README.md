@@ -52,13 +52,6 @@ cd Scripts
 # Option A: set CONFIG once per session
 export CONFIG="$PWD/../config/pipeline.env"
 
-# Metatranscriptome-data
-
-This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
-If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
-
-Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead.
-
 # Run 
 ./1_setup.sh
 ./2_pipeline_fastqc.sh
@@ -68,6 +61,12 @@ Also, there are available scripts (pipeline_download_sra) to download SRA librar
 ./6_pipeline_blastx.sh
 ./7_pipeline_summary_result.sh
 ```
+# Metatranscriptome-data
+
+This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
+If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
+
+Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead.
 
 # Run all script 
 

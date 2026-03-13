@@ -1,9 +1,27 @@
-# Mycovirus discovery workflow (Slurm/HPC)
+# Mycovirus discovery workflows (Slurm/HPC)
 
-This repository provides virus-discovery-characterization workflow configured for **PowerPlant** and **NeSI** HPC systems (Slurm). The workflows accept your sequencing data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows).
-
+This repository provides virus-discovery-characterization workflows which accept your sequencing data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows). 
 The pipeline creates/uses a standardized project folder structure and a set of scripts to speed up analysis.
 
+## Supported / tested environments
+
+This workflow is designed for **Slurm-based HPC systems**.
+
+- **Tested on:** **PowerPlant** (modules + paths configured for this environment).
+- **NeSI:** the workflow is expected to run on NeSI once the required **modules are available** (same software stack; paths may differ).
+- **Other Slurm clusters (generic):** you can run this workflow on any Slurm HPC, but you must **set up the required software modules (or an equivalent environment such as Conda)** and **configure database locations** in `config/pipeline.env`.
+
+### Software and databases
+The workflow requires common bioinformatics tools (e.g., FastQC, Trimmomatic, Bowtie2, SPAdes/rnaviralspades, BLAST+, R).  
+If you are not running on PowerPlant (and/or before NeSI modules are enabled), you are responsible for installing/loading these tools in your environment.
+
+For BLAST databases, this repository includes Slurm scripts to download/update NCBI databases:
+- `Scripts/NCBI_database_nr_update.slurm`
+- `Scripts/NCBI_database_nt_update.slurm`
+
+For RdRp database, you can access `https://github.com/JustineCharon/RdRp-scan.git`
+
+Set the resulting database paths in `config/pipeline.env` (e.g., `BLASTDB_NR`, `BLASTDB_NT`, and any custom databases you use).
 ---
 
 ## Table of contents
@@ -51,6 +69,14 @@ cd Scripts
 # Option A: set CONFIG once per session
 export CONFIG="$PWD/../config/pipeline.env"
 
+# Metatranscriptome-data
+
+This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
+If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
+
+Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead. 
+
+
 # Run 
 ./1_setup.sh
 ./2_pipeline_fastqc.sh
@@ -66,14 +92,6 @@ export CONFIG="$PWD/../config/pipeline.env"
 ./0_Run_all.sh (will run part 1 of the workflow)
 
 ---
-
-# Metatranscriptome-data
-
-This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
-If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
-
-Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead. 
-
 
 ## Repository layout
 

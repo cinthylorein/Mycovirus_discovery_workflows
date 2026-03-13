@@ -8,12 +8,12 @@ The pipeline creates/uses a standardized project folder structure and a set of s
 This workflow is designed for **Slurm-based HPC systems**.
 
 - **Tested on:** **PowerPlant** (modules + paths configured for this environment).
-- **NeSI:** the workflow is expected to run on NeSI once the required **modules are available** (same software stack; paths may differ).
-- **Other Slurm clusters (generic):** you can run this workflow on any Slurm HPC, but you must **set up the required software modules (or an equivalent environment such as Conda)** and **configure database locations** in `config/pipeline.env`.
+- **NeSI:** the workflow is expected to run on NeSI once the required modules are available (same software stack; paths may differ).
+- **Other Slurm clusters (generic):** you can run this workflow on any Slurm HPC, but you must set up the required software modules (or an equivalent environment such as Conda) and configure database locations in `config/pipeline.env`.
 
 ### Software and databases
-The workflow requires common bioinformatics tools (e.g., FastQC, Trimmomatic, Bowtie2, SPAdes/rnaviralspades, BLAST+, R).  
-If you are not running on PowerPlant (and/or before NeSI modules are enabled), you are responsible for installing/loading these tools in your environment.
+The workflow requires bioinformatics tools (e.g., FastQC, Trimmomatic, Bowtie2, SPAdes/rnaviralspades, BLAST+, R).  
+If you are not running on PowerPlant (and/or before NeSI modules are enabled), you will need to install/load these tools in your environment.
 
 For BLAST databases, this repository includes Slurm scripts to download/update NCBI databases:
 - `Scripts/NCBI_database_nr_update.slurm`

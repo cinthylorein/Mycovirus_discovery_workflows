@@ -1,6 +1,6 @@
 # Mycovirus discovery workflows (Slurm/HPC)
 
-This repository provides virus-discovery-characterization workflows which accept your sequencing data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows). 
+This repository provides virus-discovery-characterization workflows which accept your metratranscriptomic data and can be used for virus discovery with a particular focus on **mycoviruses** (including SRA mining workflows). 
 The pipeline creates/uses a standardized project folder structure and a set of scripts to speed up analysis.
 
 ## Supported / tested environments

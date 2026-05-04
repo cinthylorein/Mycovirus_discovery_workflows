@@ -62,6 +62,18 @@ This pipeline expects a config file (example path below):
 Create it (or copy from an example if you add one later), and set directories such as:
 - `RAW_DIR`, `TRIM_DIR`, `MAPPING_DIR`, `CONTIGS_DIR`, `BLAST_DIR`, `LOG_DIR`, `ADAPTER_DIR`, etc.
 
+ to define where your project lives (so scripts don’t hardcode `/workspace/...` paths).
+
+Before running any pipeline step, make sure **`PIPELINE_ROOT` points to your actual workspace path**.
+
+### Option A (recommended): export `PIPELINE_ROOT` before running
+Example (adjust to your environment):
+
+```bash
+export USER="???"
+export PIPELINE_ROOT="${PIPELINE_ROOT:-/workspace/$USER/Virus_discovery_workflows/MVoPvirome}"
+```
+
 Then run wrappers like:
 ```bash
 cd Scripts

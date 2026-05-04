@@ -86,6 +86,10 @@ export CONFIG="$PWD/../config/pipeline.env"
 This pipeline has been design for analasing generated metartrasncriptomes or for mining data with (SRA libraries). 
 If you are running your owndata you can run 1_pipeline_link_raw_fastqs_with_srr_prefix.sh after set up your directories 1_setup.sh that creates symlinks for *.fastq.gz into $RAW, optionally prefixing filenames with "SRR" (skips files already starting with SRR). The script validates RAW and source directory, creates $RAW, exits if no FASTQ files found, and uses ln -sfn to safely create/replace symlinks without modifying original files. 
 
+Usage:
+#   export RAW=/path/to/raw_reads
+#   bash Scripts/1_pipeline_link_raw_fastqs_with_srr_prefix.sh /input/genomic/viral/SAMPLE
+
 Also, there are available scripts (pipeline_download_sra) to download SRA libraries instead. 
 
 

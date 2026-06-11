@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
+
+
+####################################################################################
+# Mycovirus Discovery Workflow - Step I: set up work space                         #
+# Author: Cinthy Jimenez-Silva (2026)                                              #
+#                                                                                  #
+# Description:                                                                     #
+# User can set these before running:											   #
+#   export PIPELINE_ROOT=/somewhere/MVoPvirome                                     #
+#   export PROJECT=MVoP_pipeline                                                   #
+####################################################################################
+
 set -euo pipefail
 
-# User can set these before running:
-#   export PIPELINE_ROOT=/somewhere/MVoPvirome
-#   export PROJECT=MVoP_pipeline
-PIPELINE_ROOT="${PIPELINE_ROOT:-/workspace/$USER/Virus_discovery_workflows/MVoPvirome}"
+PIPELINE_ROOT="${PIPELINE_ROOT:-/workspace/$USER/Virus_discovery_workflows}"
 PROJECT="${PROJECT:-MVoP_pipeline}"
-EMAIL="${EMAIL:-mvop.mycoviromeonline@gmail.com}"
+
 
 PROJECT_DIR="${PIPELINE_ROOT}/${PROJECT}"
 
@@ -16,7 +25,7 @@ echo "Using PROJECT=$PROJECT"
 echo "Using EMAIL=$EMAIL"
 
 # Create folders (portable)
-mkdir -p "${PROJECT_DIR}"/{scripts,config,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc,environments,raw_reads,trimmed_reads,tmp}
+mkdir -p "${PROJECT_DIR}"/{scripts,config,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc,raw_reads,trimmed_reads,tmp}
 
 # Install config into the project (Slurm jobs will source THIS copy)
 cp -f "$(dirname "$0")/pipeline.env" "${PROJECT_DIR}/config/pipeline.env"

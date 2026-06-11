@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
 #SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
-#SBATCH --time=00:10:00
+#SBATCH --time=03:00:00
 #SBATCH --mail-type=ALL
 
 set -euo pipefail
@@ -21,7 +21,7 @@ module load FastQC/0.12.1
 mkdir -p "$FASTQC_DIR"
 
 # Build list of files inside the job (don’t pass arrays through sbatch)
-mapfile -t files < <(ls -1 "$RAW_DIR"/*.fastq* 2>/dev/null || true)
+mapfile -t files < <(ls -1 "$RAW_DIR"/*.fq.* 2>/dev/null || true)
 
 if (( ${#files[@]} == 0 )); then
   echo "ERROR: No FASTQ files found in RAW_DIR=$RAW_DIR" >&2

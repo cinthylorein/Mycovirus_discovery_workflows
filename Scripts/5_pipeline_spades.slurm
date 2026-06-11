@@ -1,10 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #SBATCH -J rnaviralspades
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
-#SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
-#SBATCH --mail-type=ALL
 
 set -euo pipefail
 set -x

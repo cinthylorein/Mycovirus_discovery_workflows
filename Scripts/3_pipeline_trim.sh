@@ -1,18 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-#Step III: TRIMMOMATIC
-# Now that the reads are filtered, we will remove adapters, over-represented sequences, and poor-quality bases from the reads
-# The command specifies that bases with quality scores less than 30 will be clipped
-# Also, after clipping, the min length for a read will be 50 bp
-# The `Illumina.fa` file contains the TruSeq adapter sequences and homo-polymer sequences to clip
-# This file needs to be edited to contain the appropriate sequences.
-# The input for this step are the SortMeRNA filtered reads
-# The output are the trimmed reads
-
-# Run the Trimmomatic program on the filtered data to remove Illumina adapters, homo-polymers, and low quality reads:
-  # Note that to do this, it is necessary to edit the file containing the adapter sequences
-  # to include all sequences that you wish to remove:
-  # This file is called Illumina.fa and is in the 000.raw directory.
+###########################################################################
+# Mycovirus Discovery Workflow - Step III: TRIMMOMATIC Batch Submitter    #
+# Author: Cinthy Jimenez-Silva (2026)                                     #
+#                                                                         #
+# Description:                                                            #
+# This script submits a batch of TRIMMOMATIC jobs to the SLURM scheduler. #
+###########################################################################
 
 set -euo pipefail
 
@@ -26,54 +20,68 @@ fi
 
 source "$CONFIG"
 
-# ---- Tool locations (cluster-specific; keep here, not inside slurm) ----
-TRIMMOMATIC_JAR="${TRIMMOMATIC_JAR:-/workspace/cflcyd/software/Trimmomatic/Trimmomatic-0.39/trimmomatic-0.39.jar}"
-CLIP="${CLIP:-${ADAPTER_DIR}/Illumina.fa}"
+: "${RAW_DIR:?Need RAW_DIR set in config/pipeline.env or environment}"
+: "${TRIM_DIR:?Need TRIM_DIR set in config/pipeline.env or environment}"
+: "${LOG_DIR:?Need LOG_DIR set in config/pipeline.env or environment}"
+: "${TRIMMOMATIC_JAR:?Need TRIMMOMATIC_JAR set in config/pipeline.env or environment}"
+: "${CLIP:?Need CLIP set in config/pipeline.env or environment}"
+: "${EMAIL:?Need EMAIL set in config/pipeline.env or environment}"
 
-# ---- Output dirs (from config) ----
 TRIM_OUT="$TRIM_DIR"
 UNPAIRED="${TRIM_DIR}/unpaired"
 TRIM_LOG_DIR="${TRIM_DIR}/logs"
 
 mkdir -p "$LOG_DIR" "$TRIM_OUT" "$UNPAIRED" "$TRIM_LOG_DIR"
 
-# Optional: fail early if inputs/tools missing
+if [[ ! -d "$RAW_DIR" ]]; then
+  echo "ERROR: RAW_DIR not found: $RAW_DIR" >&2
+  exit 1
+fi
+
 if [[ ! -f "$TRIMMOMATIC_JAR" ]]; then
   echo "ERROR: Trimmomatic jar not found: $TRIMMOMATIC_JAR" >&2
   exit 1
 fi
+
 if [[ ! -f "$CLIP" ]]; then
   echo "ERROR: Adapter file not found: $CLIP" >&2
   exit 1
 fi
 
 echo "Submitting Trimmomatic job"
+echo "CONFIG=$CONFIG"
 echo "RAW_DIR=$RAW_DIR"
 echo "TRIM_OUT=$TRIM_OUT"
 echo "UNPAIRED=$UNPAIRED"
+echo "TRIM_LOG_DIR=$TRIM_LOG_DIR"
 echo "CLIP=$CLIP"
 echo "TRIMMOMATIC_JAR=$TRIMMOMATIC_JAR"
 
-# Build list of read1 files to size the array (same patterns as slurm)
-mapfile -t read1_list < <(
-  ls -1 "$RAW_DIR"/SRR*_1.fastq "$RAW_DIR"/SRR*_1.fastq.gz 2>/dev/null || true
+shopt -s nullglob
+read1_list=(
+  "$RAW_DIR"/SRR*_1.fastq
+  "$RAW_DIR"/SRR*_1.fastq.gz
+  "$RAW_DIR"/SRR*_1.fq.gz
 )
 
 if (( ${#read1_list[@]} == 0 )); then
-  echo "ERROR: No SRR*_1.fastq(.gz) files found in $RAW_DIR" >&2
+  echo "ERROR: No SRR*_1.fastq, SRR*_1.fastq.gz, or SRR*_1.fq.gz files found in $RAW_DIR" >&2
   exit 1
 fi
 
 array_max=$((${#read1_list[@]} - 1))
 echo "Submitting Trimmomatic array: ${#read1_list[@]} samples (0..$array_max)"
 
-
 job_trim=$(sbatch --parsable \
+  --mail-user="$EMAIL" \
+  --mail-type=ALL \
   --array=0-"$array_max" \
   --export=ALL,CONFIG="$CONFIG",TRIMMOMATIC_JAR="$TRIMMOMATIC_JAR",CLIP="$CLIP",TRIM_OUT="$TRIM_OUT",UNPAIRED="$UNPAIRED",TRIM_LOG_DIR="$TRIM_LOG_DIR" \
   --output="${LOG_DIR}/trim_%A_%a.out" \
   --error="${LOG_DIR}/trim_%A_%a.err" \
-  3_pipeline_trim.slurm)
+  "${SCRIPT_DIR}/3_pipeline_trim.slurm")
 
 echo "Submitted: $job_trim"
-echo "Monitor: sacct -j $job_trim"
+echo "Monitor:"
+echo "  sacct -j $job_trim"
+echo "  squeue -u ${USER:-$(whoami)}"

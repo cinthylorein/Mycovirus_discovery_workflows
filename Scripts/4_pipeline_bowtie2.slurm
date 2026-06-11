@@ -1,10 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #SBATCH -J Bowtie_align
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=12:00:00
-#SBATCH --mail-user=cinthy.jimenez-silva@plantandfood.co.nz
-#SBATCH --mail-type=END,FAIL
 
 set -euo pipefail
 set -x
@@ -21,34 +19,63 @@ source "$CONFIG"
 
 mkdir -p "$MAP_OUT" "$MAP_LOG"
 
-# Must match wrapper patterns/order
-shopt -s nullglob
-read1_list=( "$MAP_IN"/*_trimmomatic_R1.fastq )
+find_trimmed_r1_files() {
+  local dir="$1"
+  find "$dir" -maxdepth 1 -type f \( \
+      -name '*_trimmomatic_R1.fastq'    -o \
+      -name '*_trimmomatic_R1.fastq.gz' -o \
+      -name '*_trimmomatic_R1.fq'       -o \
+      -name '*_trimmomatic_R1.fq.gz' \
+    \) | sort
+}
+
+mapfile -t read1_list < <(find_trimmed_r1_files "$MAP_IN")
 
 if (( ${#read1_list[@]} == 0 )); then
   echo "ERROR: No trimmed R1 files found in $MAP_IN" >&2
+  echo "Supported patterns: *_trimmomatic_R1.fastq, *_trimmomatic_R1.fastq.gz, *_trimmomatic_R1.fq, *_trimmomatic_R1.fq.gz" >&2
   exit 1
 fi
 
-R1="${read1_list[$SLURM_ARRAY_TASK_ID]:-}"
+TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
+R1="${read1_list[$TASK_ID]:-}"
+
 if [[ -z "$R1" ]]; then
-  echo "ERROR: No R1 for task $SLURM_ARRAY_TASK_ID (n=${#read1_list[@]})" >&2
+  echo "ERROR: No R1 for task $TASK_ID (n=${#read1_list[@]})" >&2
   exit 1
 fi
 
-# Derive label and mate filename
-LABEL="$(basename "${R1%_trimmomatic_R1.fastq}")"
-R2="${MAP_IN}/${LABEL}_trimmomatic_R2.fastq"
+base="$(basename "$R1")"
+
+if [[ "$base" == *_trimmomatic_R1.fastq.gz ]]; then
+  LABEL="${base%_trimmomatic_R1.fastq.gz}"
+  R2="${MAP_IN}/${LABEL}_trimmomatic_R2.fastq.gz"
+  ext="fastq.gz"
+elif [[ "$base" == *_trimmomatic_R1.fq.gz ]]; then
+  LABEL="${base%_trimmomatic_R1.fq.gz}"
+  R2="${MAP_IN}/${LABEL}_trimmomatic_R2.fq.gz"
+  ext="fq.gz"
+elif [[ "$base" == *_trimmomatic_R1.fastq ]]; then
+  LABEL="${base%_trimmomatic_R1.fastq}"
+  R2="${MAP_IN}/${LABEL}_trimmomatic_R2.fastq"
+  ext="fastq"
+elif [[ "$base" == *_trimmomatic_R1.fq ]]; then
+  LABEL="${base%_trimmomatic_R1.fq}"
+  R2="${MAP_IN}/${LABEL}_trimmomatic_R2.fq"
+  ext="fq"
+else
+  echo "ERROR: Unsupported R1 filename: $base" >&2
+  exit 1
+fi
 
 if [[ ! -f "$R2" ]]; then
   echo "ERROR: Missing mate R2 for $LABEL. Expected: $R2" >&2
   exit 1
 fi
 
-# Index basename must match build step
 INDEX_BASE="${INDEX_DIR}/host"
 
-# Bowtie2 will create two files: <prefix>.1 and <prefix>.2 for paired reads
+# Bowtie2 inserts .1 and .2 before the extension
 UNMAPPED_PREFIX="${MAP_OUT}/${LABEL}.non-host.fq.gz"
 
 echo "[$LABEL] Running Bowtie2 alignment..."
@@ -57,7 +84,6 @@ echo "R2=$R2"
 echo "INDEX_BASE=$INDEX_BASE"
 echo "UNMAPPED_PREFIX=$UNMAPPED_PREFIX"
 
-# Use Slurm CPUs
 THREADS="${SLURM_CPUS_PER_TASK:-2}"
 
 bowtie2 --end-to-end --sensitive -p "$THREADS" -x "$INDEX_BASE" \
@@ -66,4 +92,5 @@ bowtie2 --end-to-end --sensitive -p "$THREADS" -x "$INDEX_BASE" \
   -S /dev/null
 
 echo "[$LABEL] Done. Non-host reads written with prefix: $UNMAPPED_PREFIX"
+
 module unload bowtie2/2.3.4.3

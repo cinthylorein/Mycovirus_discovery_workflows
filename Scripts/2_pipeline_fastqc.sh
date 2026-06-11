@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ########################################################################
-#  Mycovirus Discovery Workflow - FastQC Batch Submitter              #
-#  Author: Cinthy Jimenez-Silva (2025)                                #
+#  Mycovirus Discovery Workflow - FastQC Batch Submitter               #
+#  Author: Cinthy Jimenez-Silva (2026)                                 #
 #                                                                      #
-#  Description:                                                       #
-#  This script submits a batch of FastQC jobs to the SLURM scheduler. #
+#  Description:                                                        #
+#  This script submits a batch of FastQC jobs to the SLURM scheduler.  #
 ########################################################################
 
 #In this pipeline, we will run our analysis using powerPlant High-Performance computing 
@@ -35,7 +35,7 @@ source "$CONFIG"
 
 mkdir -p "$LOG_DIR" "$FASTQC_DIR"
 
-mapfile -t FASTQ_FILES < <(ls -1 "$RAW_DIR"/*.fastq* 2>/dev/null || true)
+mapfile -t FASTQ_FILES < <(ls -1 "$RAW_DIR"/*.fq* 2>/dev/null || true)
 N="${#FASTQ_FILES[@]}"
 if (( N == 0 )); then
   echo "ERROR: No FASTQ files found in $RAW_DIR" >&2

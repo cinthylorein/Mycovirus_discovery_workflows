@@ -1,56 +1,49 @@
 #!/usr/bin/env Rscript
 
 # Summary_table.R
-# A runnable script to combine and annotate BLAST result CSVs (blastx / blastn)
-# Usage examples:
-# Rscript Pipeline_A_scripts_Summary_table.R --db /path/to/NCBI_AllVirus_DB.csv --inputs "sample1_blastx.csv,sample2_blastx.csv" --format blastx --outdir ./results
-# Rscript Pipeline_A_scripts_Summary_table.R --db /path/to/NCBI_AllVirus_DB.csv --inputs "/data/*_blastx.csv" --format blastx --outdir ./results
 #
-# Arguments:
-# --db       : path to the BLASTDB metadata CSV (required)
-# --inputs   : comma-separated list of blast result files, or a glob pattern (required)
-# --format   : "blastx" or "blastn" (default: blastx) — used to assign expected column names
-# --outdir   : directory to write outputs (default: current working directory)
-# --prefix   : prefix for output filenames (default: combined_blast)
-#
-# The script:
-# - reads the DB csv and renames Accession -> Accession.Ver if needed
-# - reads each blast file, assigns columns according to format, calculates coverage (length / qlen) if qlen available
-# - left joins per-hit metadata from DB using Accession.Ver
-# - combines all inputs into one dataframe, adds a sample column derived from the filename
-# - writes combined and unique-ID CSVs
+# Combine and annotate BLAST/DIAMOND result tables from multiple samples.
+# Supports blastn, blastx, diamond tabular outputs.
+# Adds:
+# - coverage = length / qlen (when available)
+# - top20_family flag
+# - plot_caption field for downstream plotting
+
+required_pkgs <- c("optparse", "readr", "dplyr", "purrr", "stringr", "tibble")
+
+missing_pkgs <- required_pkgs[!vapply(required_pkgs, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing_pkgs) > 0) {
+  stop(
+    "Missing required R packages: ", paste(missing_pkgs, collapse = ", "), "\n",
+    "Please install them before running the script."
+  )
+}
 
 suppressPackageStartupMessages({
-  required_pkgs <- c("optparse", "readr", "dplyr", "purrr", "stringr")
-  for (pkg in required_pkgs) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      install.packages(pkg, repos = "https://cloud.r-project.org")
-    }
-  }
   library(optparse)
   library(readr)
   library(dplyr)
   library(purrr)
   library(stringr)
+  library(tibble)
 })
 
 option_list <- list(
-  make_option(c("--db"), type="character", default=NULL,
-              help="Path to BLASTDB metadata CSV (required)", metavar="character"),
-  make_option(c("--inputs"), type="character", default=NULL,
-              help="Comma-separated list of blast result files, OR a single glob pattern (required). e.g. 's1.csv,s2.csv' or '/path/*_blastx.csv'", metavar="character"),
-  make_option(c("--format"), type="character", default="blastx",
-              help="blast result format: 'blastx' or 'blastn' (default: %default)", metavar="character"),
-  make_option(c("--outdir"), type="character", default=".",
-              help="Output directory (default: current directory)", metavar="character"),
-  make_option(c("--prefix"), type="character", default="combined_blast",
-              help="Prefix for output files (default: %default)", metavar="character")
+  make_option(c("--db"), type = "character", default = NULL,
+              help = "Path to BLASTDB metadata CSV (required)", metavar = "character"),
+  make_option(c("--inputs"), type = "character", default = NULL,
+              help = "Comma-separated list of result files, OR a single glob pattern (required)", metavar = "character"),
+  make_option(c("--format"), type = "character", default = "blastx",
+              help = "Result format: blastx, blastn, or diamond [default: %default]", metavar = "character"),
+  make_option(c("--outdir"), type = "character", default = ".",
+              help = "Output directory [default: current directory]", metavar = "character"),
+  make_option(c("--prefix"), type = "character", default = "combined_blast",
+              help = "Prefix for output files [default: %default]", metavar = "character")
 )
 
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
 
-# Validate required args
 if (is.null(opt$db) || is.null(opt$inputs)) {
   cat("ERROR: --db and --inputs are required arguments.\n\n")
   print_help(opt_parser)
@@ -63,175 +56,360 @@ format <- tolower(opt$format)
 outdir <- opt$outdir
 prefix <- opt$prefix
 
-if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
-
-cat("Reading BLAST DB metadata from:", db_path, "\n")
-if (!file.exists(db_path)) {
-  stop("BLAST DB metadata file does not exist: ", db_path)
+valid_formats <- c("blastx", "blastn", "diamond")
+if (!(format %in% valid_formats)) {
+  stop("--format must be one of: ", paste(valid_formats, collapse = ", "))
 }
 
-# Read BLAST database metadata CSV (attempt readr then base read.csv as fallback)
+if (!dir.exists(outdir)) {
+  dir.create(outdir, recursive = TRUE)
+}
+
+cat("Reading metadata DB:", db_path, "\n")
+if (!file.exists(db_path)) stop("Metadata DB does not exist: ", db_path)
+
 BLASTDB <- tryCatch(
   readr::read_csv(db_path, show_col_types = FALSE),
   error = function(e) read.csv(db_path, header = TRUE, stringsAsFactors = FALSE)
-)
+) %>% as_tibble()
 
-# Normalize accession column name
+# Normalize accession column in DB
 if ("Accession" %in% colnames(BLASTDB) && !("Accession.Ver" %in% colnames(BLASTDB))) {
   colnames(BLASTDB)[colnames(BLASTDB) == "Accession"] <- "Accession.Ver"
 }
+if ("Accession.Ver" %in% colnames(BLASTDB)) {
+  BLASTDB <- BLASTDB %>% mutate(Accession.Ver = as.character(Accession.Ver))
+} else {
+  warning("Metadata DB has no Accession.Ver column. Metadata join will be skipped.")
+}
 
-# Determine list of input files
-# If the user provided a glob pattern (contains * ? or []), expand with Sys.glob.
 expand_inputs <- function(in_arg) {
-  # split comma separated
-  parts <- strsplit(in_arg, ",")[[1]] %>% trimws()
+  parts <- strsplit(in_arg, ",")[[1]]
+  parts <- trimws(parts)
+  parts <- parts[nzchar(parts)]
+
   files <- c()
   for (p in parts) {
     if (grepl("[*?\\[\\]]", p)) {
       g <- Sys.glob(p)
-      if (length(g) == 0) {
-        warning("Glob pattern matched no files: ", p)
-      }
+      if (length(g) == 0) warning("Glob pattern matched no files: ", p)
       files <- c(files, g)
     } else {
       files <- c(files, p)
     }
   }
-  # remove duplicates, non-existent files produce a warning but keep only existing
+
   files <- unique(files)
   files <- files[file.exists(files)]
-  if (length(files) == 0) {
-    stop("No input files found from --inputs: ", in_arg)
-  }
-  return(files)
+  if (length(files) == 0) stop("No input files found from --inputs: ", in_arg)
+  files
 }
 
 input_files <- expand_inputs(inputs_arg)
-cat("Found", length(input_files), "input file(s):\n")
+cat("Found", length(input_files), "input file(s)\n")
 for (f in input_files) cat(" -", f, "\n")
 
-# Column name templates
-blastn_cols <- c("qseqid","Accession.Ver","pident","staxid","ssciname","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore","qlen")
-# blastx often has fewer columns; this is a common selection
-blastx_cols <- c("qseqid","Accession.Ver","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore","qlen")
+# Expected layouts
+blastn_cols_15 <- c(
+  "qseqid", "Accession.Ver", "pident", "staxid", "ssciname", "length",
+  "mismatch", "gapopen", "qstart", "qend", "sstart", "send",
+  "evalue", "bitscore", "qlen"
+)
 
-# Function to read a single blast file and normalize columns
-read_blast_file <- function(path, fmt = c("blastx","blastn")) {
-  fmt <- match.arg(fmt)
-  # Try reading with read_delim guessing whitespace/tab separated
-  df <- tryCatch({
-    readr::read_delim(path, delim = "\t", col_names = FALSE, show_col_types = FALSE)
-  }, error = function(e) {
-    # fallback to read_csv with commas
-    tryCatch(readr::read_csv(path, col_names = FALSE, show_col_types = FALSE),
-             error = function(e2) stop("Failed to read blast file: ", path))
-  })
-  # If the file already has header row that matches any known names, read again with header
-  first_row <- as.character(unlist(df[1,]))
-  known_names <- unique(c(blastn_cols, blastx_cols))
-  # Heuristic: if first row contains known names entirely or largely, re-read with header
-  hit_names <- sum(tolower(first_row) %in% tolower(known_names))
-  if (hit_names >= 3) {
-    # treat as header
-    df <- tryCatch({
-      readr::read_delim(path, delim = "\t", col_names = TRUE, show_col_types = FALSE)
-    }, error = function(e) {
-      tryCatch(readr::read_csv(path, col_names = TRUE, show_col_types = FALSE),
-               error = function(e2) df) # keep previous
-    })
-  }
-  # Assign column names if missing or generic V1..Vn
-  if (fmt == "blastn") {
-    expected <- blastn_cols
-  } else {
-    expected <- blastx_cols
-  }
-  # If the dataframe already has column names matching expected, keep them.
-  existing_names <- colnames(df)
-  if (!all(expected %in% existing_names)) {
-    # If number of cols matches length of expected, assign them
-    if (ncol(df) >= length(expected)) {
-      colnames(df)[1:length(expected)] <- expected
+# blastx mapped same as blastn for your pipeline
+blastx_cols_15 <- c(
+  "qseqid", "Accession.Ver", "pident", "staxid", "ssciname", "length",
+  "mismatch", "gapopen", "qstart", "qend", "sstart", "send",
+  "evalue", "bitscore", "qlen"
+)
+
+# DIAMOND outfmt 6 qseqid qlen sseqid stitle pident length evalue bitscore
+diamond_cols_8 <- c(
+  "qseqid", "qlen", "sseqid", "stitle", "pident", "length", "evalue", "bitscore"
+)
+
+strip_accession_version <- function(x) {
+  x <- as.character(x)
+  sub("\\.\\d+$", "", x)
+}
+
+assign_columns <- function(df, fmt, path) {
+  n <- ncol(df)
+
+  if (fmt %in% c("blastn", "blastx")) {
+    expected <- if (fmt == "blastn") blastn_cols_15 else blastx_cols_15
+    if (n >= length(expected)) {
+      colnames(df)[seq_along(expected)] <- expected
+      if (n > length(expected)) {
+        extras <- seq(length(expected) + 1, n)
+        colnames(df)[extras] <- paste0("X", extras)
+        warning("File ", path, " has ", n, " columns; expected ", length(expected), " for ", fmt, ". Extra columns kept as X*.")
+      }
     } else {
-      # If fewer columns than expected, try to map common columns: qseqid, Accession.Ver, pident, length, evalue, bitscore, qlen
-      short_map <- c("qseqid","Accession.Ver","pident","length","evalue","bitscore","qlen")
-      n <- min(ncol(df), length(short_map))
-      colnames(df)[1:n] <- short_map[1:n]
-      # Warn the user
-      warning("File ", path, " had ", ncol(df), " columns; assigned first ", n, " column names. You may need to check column mapping.")
+      warning("File ", path, " has only ", n, " columns; expected ", length(expected), " for ", fmt, ". Missing columns set to NA.")
+      colnames(df) <- expected[seq_len(n)]
+      for (k in (n + 1):length(expected)) df[[expected[k]]] <- NA
+      df <- df[, expected, drop = FALSE]
+    }
+  } else if (fmt == "diamond") {
+    expected <- diamond_cols_8
+    if (n >= length(expected)) {
+      colnames(df)[seq_along(expected)] <- expected
+      if (n > length(expected)) {
+        extras <- seq(length(expected) + 1, n)
+        colnames(df)[extras] <- paste0("X", extras)
+        warning("File ", path, " has ", n, " columns; expected ", length(expected), " for diamond. Extra columns kept as X*.")
+      }
+    } else {
+      warning("File ", path, " has only ", n, " columns; expected ", length(expected), " for diamond. Missing columns set to NA.")
+      colnames(df) <- expected[seq_len(n)]
+      for (k in (n + 1):length(expected)) df[[expected[k]]] <- NA
+      df <- df[, expected, drop = FALSE]
     }
   }
-  # Ensure Accession.Ver column exists (or maybe it's called saccver, sseqid). Try to coerce common names to Accession.Ver
-  if (!"Accession.Ver" %in% colnames(df)) {
-    if ("saccver" %in% tolower(colnames(df))) {
-      colnames(df)[tolower(colnames(df)) == "saccver"] <- "Accession.Ver"
-    } else if ("sseqid" %in% tolower(colnames(df))) {
-      colnames(df)[tolower(colnames(df)) == "sseqid"] <- "Accession.Ver"
-    } else if ("subject" %in% tolower(colnames(df))) {
-      colnames(df)[tolower(colnames(df)) == "subject"] <- "Accession.Ver"
+
+  as_tibble(df)
+}
+
+normalize_hit_columns <- function(df) {
+  lower_names <- tolower(colnames(df))
+
+  if (!("Accession.Ver" %in% colnames(df))) {
+    if ("saccver" %in% lower_names) {
+      colnames(df)[which(lower_names == "saccver")[1]] <- "Accession.Ver"
+    } else if ("sacc" %in% lower_names) {
+      colnames(df)[which(lower_names == "sacc")[1]] <- "Accession.Ver"
+    } else if ("sseqid" %in% lower_names) {
+      colnames(df)[which(lower_names == "sseqid")[1]] <- "Accession.Ver"
+    } else if ("subject" %in% lower_names) {
+      colnames(df)[which(lower_names == "subject")[1]] <- "Accession.Ver"
     }
   }
-  # Convert to tibble
-  df <- as_tibble(df)
-  # compute coverage if qlen present
+
+  num_cols <- intersect(
+    c("pident", "length", "mismatch", "gapopen", "qstart", "qend",
+      "sstart", "send", "evalue", "bitscore", "qlen", "staxid"),
+    colnames(df)
+  )
+  for (cn in num_cols) df[[cn]] <- suppressWarnings(as.numeric(df[[cn]]))
+
+  if ("Accession.Ver" %in% colnames(df)) df$Accession.Ver <- as.character(df$Accession.Ver)
+  if ("sseqid" %in% colnames(df)) df$sseqid <- as.character(df$sseqid)
+
+  # For diamond, promote sseqid to Accession.Ver when missing
+  if (!("Accession.Ver" %in% colnames(df)) && "sseqid" %in% colnames(df)) {
+    df$Accession.Ver <- df$sseqid
+  }
+
+  # accession base for fallback joining
+  if ("Accession.Ver" %in% colnames(df)) {
+    df <- df %>% mutate(Accession_base = strip_accession_version(Accession.Ver))
+  } else {
+    df <- df %>% mutate(Accession_base = NA_character_)
+  }
+
+  # coverage
   if ("length" %in% colnames(df) && "qlen" %in% colnames(df)) {
-    df <- df %>% mutate(coverage = as.numeric(length) / as.numeric(qlen))
+    df <- df %>% mutate(
+      coverage = ifelse(!is.na(qlen) & qlen > 0, as.numeric(length) / as.numeric(qlen), NA_real_)
+    )
   } else {
     df <- df %>% mutate(coverage = NA_real_)
   }
-  return(df)
+
+  df
 }
 
-# Read and process each file, then left_join with BLASTDB
-processed_list <- map(input_files, function(fpath) {
-  cat("Processing:", fpath, " ...\n")
-  df <- read_blast_file(fpath, fmt = format)
-  # Add a sample column derived from filename (strip directory and common suffixes)
+read_result_file <- function(path, fmt = c("blastx", "blastn", "diamond")) {
+  fmt <- match.arg(fmt)
+
+  raw <- tryCatch(
+    readr::read_delim(path, delim = "\t", col_names = FALSE, show_col_types = FALSE, progress = FALSE),
+    error = function(e) {
+      tryCatch(
+        readr::read_csv(path, col_names = FALSE, show_col_types = FALSE, progress = FALSE),
+        error = function(e2) stop("Failed to read file: ", path)
+      )
+    }
+  )
+
+  if (nrow(raw) == 0 && ncol(raw) == 0) {
+    warning("File appears empty: ", path)
+    return(tibble())
+  }
+
+  # detect possible header row
+  first_row <- tryCatch(as.character(unlist(raw[1, ])), error = function(e) character(0))
+  known <- tolower(unique(c(
+    blastn_cols_15, blastx_cols_15, diamond_cols_8, "sacc", "saccver", "sseqid", "subject"
+  )))
+  header_hits <- sum(tolower(first_row) %in% known)
+
+  if (header_hits >= 3) {
+    raw <- tryCatch(
+      readr::read_delim(path, delim = "\t", col_names = TRUE, show_col_types = FALSE, progress = FALSE),
+      error = function(e) {
+        tryCatch(
+          readr::read_csv(path, col_names = TRUE, show_col_types = FALSE, progress = FALSE),
+          error = function(e2) raw
+        )
+      }
+    )
+  }
+
+  df <- as_tibble(raw)
+
+  generic <- all(grepl("^X[0-9]+$", colnames(df)))
+  if (generic || !("qseqid" %in% tolower(colnames(df)))) {
+    df <- assign_columns(df, fmt, path)
+  }
+
+  df <- normalize_hit_columns(df)
+  df
+}
+
+# Prepare DB fallback accession base
+if ("Accession.Ver" %in% colnames(BLASTDB)) {
+  BLASTDB <- BLASTDB %>%
+    mutate(
+      Accession.Ver = as.character(Accession.Ver),
+      Accession_base = strip_accession_version(Accession.Ver)
+    )
+}
+
+processed_list <- purrr::map(input_files, function(fpath) {
+  cat("Processing:", fpath, "\n")
+  df <- read_result_file(fpath, fmt = format)
+
+  if (nrow(df) == 0) {
+    warning("No rows found in: ", fpath)
+    return(df)
+  }
+
   sample_name <- basename(fpath) %>%
-    str_replace_all("\\.csv$|\\.tsv$|\\.blast$|_blastx|_blastn|_merged", "") %>%
-    str_replace_all("\\..*$", "")
-  df <- df %>% mutate(source_file = fpath, sample = sample_name)
-  # Ensure Accession.Ver is character (some reads may be numeric)
-  if ("Accession.Ver" %in% colnames(df)) {
-    df <- df %>% mutate(Accession.Ver = as.character(Accession.Ver))
-  }
-  # Join to BLASTDB by Accession.Ver (if present)
-  if ("Accession.Ver" %in% colnames(df)) {
-    df <- left_join(df, BLASTDB, by = "Accession.Ver")
+    str_replace("\\.csv$", "") %>%
+    str_replace("\\.tsv$", "") %>%
+    str_replace("_nt_blast$", "") %>%
+    str_replace("_blastn_nt$", "") %>%
+    str_replace("_nr_blastx$", "") %>%
+    str_replace("_tx_blast$", "") %>%
+    str_replace("_rdrp_diamond$", "") %>%
+    str_replace("_rdrp_blast$", "") %>%
+    str_replace("_blastx$", "") %>%
+    str_replace("_blastn$", "") %>%
+    str_replace("_merged$", "")
+
+  df <- df %>%
+    mutate(
+      source_file = fpath,
+      sample = sample_name,
+      search_format = format
+    )
+
+  # metadata join
+  if ("Accession.Ver" %in% colnames(df) && "Accession.Ver" %in% colnames(BLASTDB)) {
+    joined <- df %>% left_join(BLASTDB, by = "Accession.Ver", suffix = c("", ".db"))
+
+    # fallback rows (no organism after exact join)
+    need_fallback <- if ("Organism_Name" %in% colnames(joined)) is.na(joined$Organism_Name) else rep(TRUE, nrow(joined))
+
+    if (any(need_fallback) && "Accession_base" %in% colnames(df) && "Accession_base" %in% colnames(BLASTDB)) {
+      db_fallback <- BLASTDB %>%
+        filter(!is.na(Accession_base), Accession_base != "") %>%
+        distinct(Accession_base, .keep_all = TRUE)
+
+      fallback_part <- joined[need_fallback, , drop = FALSE] %>%
+        mutate(.row_id_tmp = row_number())
+
+      if (!("Accession_base" %in% colnames(fallback_part))) {
+        if ("Accession.Ver" %in% colnames(fallback_part)) {
+          fallback_part <- fallback_part %>%
+            mutate(Accession_base = strip_accession_version(as.character(Accession.Ver)))
+        }
+      }
+
+      if ("Accession_base" %in% colnames(fallback_part)) {
+        fallback_join <- fallback_part %>%
+          left_join(db_fallback, by = "Accession_base", suffix = c("", ".fb"))
+
+        fb_cols <- grep("\\.fb$", colnames(fallback_join), value = TRUE)
+        for (fb in fb_cols) {
+          base <- sub("\\.fb$", "", fb)
+          if (!(base %in% colnames(fallback_join))) fallback_join[[base]] <- NA
+          idx <- is.na(fallback_join[[base]]) & !is.na(fallback_join[[fb]])
+          fallback_join[[base]][idx] <- fallback_join[[fb]][idx]
+        }
+
+        fallback_join <- fallback_join %>% select(-any_of(fb_cols))
+        joined_idx <- which(need_fallback)
+        common_cols <- intersect(colnames(joined), colnames(fallback_join))
+        joined[joined_idx, common_cols] <- fallback_join[, common_cols, drop = FALSE]
+      }
+    }
+
+    df <- joined
   } else {
-    warning("No Accession.Ver column in file: ", fpath, " — skipping DB join for this file.")
+    warning("Accession.Ver missing in hits or metadata; skipping metadata join for: ", fpath)
   }
-  return(df)
+
+  cat("  rows:", nrow(df), "\n")
+  cat("  columns:", paste(head(colnames(df), 20), collapse = ", "), if (ncol(df) > 20) "..." else "", "\n")
+  df
 })
 
 combined_df <- bind_rows(processed_list)
 
-# Write combined CSV
+# Add top-20 and caption
+family_counts <- combined_df %>%
+  filter(!is.na(Family), Family != "") %>%
+  count(Family, sort = TRUE)
+
+top20_families <- family_counts %>% slice_head(n = 20) %>% pull(Family)
+
+caption_text <- paste(
+  "Top 20 viral families were selected by descending hit count (number of records) in the combined dataset;",
+  "no additional filtering thresholds were applied."
+)
+
+combined_df <- combined_df %>%
+  mutate(
+    top20_family = ifelse(!is.na(Family) & Family %in% top20_families, TRUE, FALSE),
+    plot_caption = caption_text
+  )
+
 combined_path <- file.path(outdir, paste0(prefix, "_combined.csv"))
-cat("Writing combined data to:", combined_path, "\n")
+cat("Writing combined file:", combined_path, "\n")
 readr::write_csv(combined_df, combined_path)
 
-# Write unique IDs file similar to previous script selection; attempt to pick existing columns
-# Columns to attempt: pident, Accession (or Accession.Ver), qseqid, Organism_Name, Species, Genus, Family, length, sstart, send, coverage, evalue, source_df (or source_file or sample)
-select_columns <- c("pident","Accession","Accession.Ver","qseqid","Organism_Name","Species","Genus","Family","length","sstart","send","coverage","evalue","source_df","source_file","sample")
+preferred_order <- c(
+  "qseqid", "Accession.Ver", "pident", "length", "qlen", "coverage", "evalue", "bitscore",
+  "sample", "search_format", "Organism_Name", "Species", "Genus", "Family",
+  "top20_family", "plot_caption", "source_file"
+)
 
-available_cols <- intersect(select_columns, colnames(combined_df))
-# prefer nicer column ordering: choose a preferred subset if available
-preferred_order <- c("pident","Accession.Ver","qseqid","Organism_Name","Species","Genus","Family","length","sstart","send","coverage","evalue","sample","source_file")
-available_preferred <- intersect(preferred_order, colnames(combined_df))
-if (length(available_preferred) == 0) {
-  # fallback: use all available columns
+if ("qseqid" %in% colnames(combined_df)) {
   unique_df <- combined_df %>% distinct(qseqid, .keep_all = TRUE)
 } else {
-  unique_df <- combined_df %>% distinct(qseqid, .keep_all = TRUE) %>% select(all_of(available_preferred))
+  unique_df <- combined_df
+}
+
+available_preferred <- intersect(preferred_order, colnames(unique_df))
+if (length(available_preferred) > 0) {
+  unique_df <- unique_df %>% select(all_of(available_preferred), everything())
 }
 
 unique_path <- file.path(outdir, paste0(prefix, "_uniqueIDs.csv"))
-cat("Writing unique IDs to:", unique_path, "\n")
-# The original script wrote without row names and without column names; we'll include column names.
+cat("Writing unique IDs file:", unique_path, "\n")
 readr::write_csv(unique_df, unique_path)
 
-cat("Done. Outputs:\n")
-cat(" -", format, combined_path, "\n")
-cat(" -", format, unique_path, "\n")
+top20_path <- file.path(outdir, paste0(prefix, "_top20_families.csv"))
+cat("Writing top-20 family summary:", top20_path, "\n")
+readr::write_csv(
+  family_counts %>% slice_head(n = 20) %>% mutate(rank = row_number()) %>% select(rank, everything()),
+  top20_path
+)
+
+cat("Done.\n")
+cat(" - Combined:", combined_path, "\n")
+cat(" - Unique  :", unique_path, "\n")
+cat(" - Top20   :", top20_path, "\n")

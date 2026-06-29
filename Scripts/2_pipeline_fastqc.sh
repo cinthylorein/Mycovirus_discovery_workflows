@@ -35,7 +35,7 @@ source "$CONFIG"
 
 mkdir -p "$LOG_DIR" "$FASTQC_DIR"
 
-mapfile -t FASTQ_FILES < <(ls -1 "$RAW_DIR"/*.fq* 2>/dev/null || true)
+mapfile -t FASTQ_FILES < <(ls -1 "$RAW_DIR"/*.fastq 2>/dev/null || true)
 N="${#FASTQ_FILES[@]}"
 if (( N == 0 )); then
   echo "ERROR: No FASTQ files found in $RAW_DIR" >&2

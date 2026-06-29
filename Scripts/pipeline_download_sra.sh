@@ -10,11 +10,11 @@ if [[ -f "$CONFIG" ]]; then
 fi
 
 # Where the accession list lives
-INPATH="${INPATH:-/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/accession_lists}"
+INPATH="${INPATH:-/workspace/hraczj/Mycovirus_discovery_workflows/MVoP_pipeline/accession_lists}"
 ACCESSIONS_FILE="${ACCESSIONS_FILE:-${INPATH}/accessions.txt}"
 
 # Where to write FASTQs (set this to your raw reads directory)
-OUTDIR="${OUTDIR:-${RAW_DIR:-/workspace/hraczj/Virus_discovery_workflows/MVoPvirome/MVoP_pipeline/raw_reads}}"
+OUTDIR="${OUTDIR:-${RAW_DIR:-/workspace/hraczj/Mycovirus_discovery_workflows/MVoP_pipeline/raw_reads}}"
 
 if [[ ! -f "$ACCESSIONS_FILE" ]]; then
   echo "ERROR: accessions file not found: $ACCESSIONS_FILE" >&2

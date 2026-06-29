@@ -13,7 +13,7 @@
 
 set -euo pipefail
 
-PIPELINE_ROOT="${PIPELINE_ROOT:-/workspace/$USER/Virus_discovery_workflows}"
+PIPELINE_ROOT="${PIPELINE_ROOT:-/workspace/$USER/Mycovirus_discovery_workflows}"
 PROJECT="${PROJECT:-MVoP_pipeline}"
 
 
@@ -22,27 +22,21 @@ PROJECT_DIR="${PIPELINE_ROOT}/${PROJECT}"
 echo "Setting up project at: $PROJECT_DIR"
 echo "Using PIPELINE_ROOT=$PIPELINE_ROOT"
 echo "Using PROJECT=$PROJECT"
-echo "Using EMAIL=$EMAIL"
 
 # Create folders (portable)
-mkdir -p "${PROJECT_DIR}"/{scripts,config,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc,raw_reads,trimmed_reads,tmp}
+mkdir -p "${PROJECT_DIR}"/{Scripts,config,accession_lists,adapters,logs,blast_results,annotation,mapping,contigs,fastqc,raw_reads,trimmed_reads,tmp}
 
 # Install config into the project (Slurm jobs will source THIS copy)
 cp -f "$(dirname "$0")/pipeline.env" "${PROJECT_DIR}/config/pipeline.env"
 
-# Optional: personalize email in the installed config (only if you want it there)
-# (You can also keep email separate; leaving this simple)
-export EMAIL="${EMAIL:-mvop.mycoviromeonline@gmail.com}"
-
-# Ensure EMAIL is present exactly once in the installed config
-grep -v '^export EMAIL=' "${PROJECT_DIR}/config/pipeline.env" > "${PROJECT_DIR}/config/pipeline.env.tmp"
-mv "${PROJECT_DIR}/config/pipeline.env.tmp" "${PROJECT_DIR}/config/pipeline.env"
-echo "export EMAIL=\"${EMAIL}\"" >> "${PROJECT_DIR}/config/pipeline.env"
-
 # Copy scripts into project/scripts
 # Assumes you run setup from inside the cloned repo and Scripts/ contains the workflow scripts
-cp -f "$(dirname "$0")/"*.sh "${PROJECT_DIR}/scripts/" || true
-cp -f "$(dirname "$0")/"*.slurm "${PROJECT_DIR}/scripts/" 2>/dev/null || true
+cp -f "$(dirname "$0")/"*.sh "${PROJECT_DIR}/Scripts/" || true
+cp -f "$(dirname "$0")/"*.slurm "${PROJECT_DIR}/Scripts/" 2>/dev/null || true
+
+# Copy scripts into project/accession_lists
+
+cp -f "../accession_lists/accessions.txt" "${PROJECT_DIR}/accession_lists/accessions.txt"
 
 # Copy adapters/environments if they exist in repo top-level folders
 REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd)"

@@ -225,35 +225,6 @@ Run these from `Scripts/` (each wrapper submits Slurm jobs):
 10.	Multiple Sequence Alignment
 11.	Model Selection and Tree reconstruction 
 
-
-Step-by-step scripts (host-aware pipeline part 2)
-
-8.	**ORF prediction and Traslation**
-   - Wrapper:   
-   - Slurm:   
-   - Input:   
-   - Output: 
-   
-9.	**Extract RdRp/Rep Amino Acid Sequences and add to Reference Mycoviral families alignments**
-   - Wrapper:   
-   - Slurm:   
-   - Input:   
-   - Output: 
-10.	**Multiple Sequence Alignment**
-   - Wrapper:   
-   - Slurm:   
-   - Input:   
-   - Output: 
-11.	**Model Selection and Tree reconstruction**
-   - Wrapper:   
-   - Slurm:   
-   - Input:   
-   - Output: 
-   
-Outputs
-
-
-
 ## HPC tips (logs, monitoring, reruns)
 
 ### Where are logs?
